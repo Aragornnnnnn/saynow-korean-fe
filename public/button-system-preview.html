@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SayNow 버튼 디자인 시스템</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #111; }
+
+  .page { max-width: 420px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 32px; }
+
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e5e5e5; }
+
+  /* === 버튼 기본 === */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 75ms ease, box-shadow 75ms ease, opacity 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* === Size variants === */
+  .btn-lg {
+    height: 56px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .btn-md {
+    height: 48px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-sm {
+    height: 40px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* === Color variants === */
+
+  /* Primary — 주황 (메인 CTA) */
+  .btn-primary {
+    background: #e07a3a;
+    color: #fff;
+    box-shadow: 0 5px 0 #A85822;
+  }
+  .btn-primary:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #A85822;
+  }
+
+  /* White — 흰색 (이미지 위 CTA, 브리핑 전용) */
+  .btn-white {
+    background: linear-gradient(180deg, #ffffff 0%, #f0f0ee 100%);
+    color: #F97316;
+    box-shadow: 0 5px 0 rgba(255,255,255,0.45);
+  }
+  .btn-white:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 rgba(255,255,255,0.45);
+  }
+
+  /* Secondary — 회색 (보조 액션) */
+  .btn-secondary {
+    background: #EBEBEA;
+    color: #333;
+    box-shadow: 0 4px 0 #C8C8C6;
+  }
+  .btn-secondary:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #C8C8C6;
+  }
+
+  /* Danger — 빨강 (탈퇴 등 위험 액션) */
+  .btn-danger {
+    background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
+    color: #fff;
+    box-shadow: 0 5px 0 #991B1B;
+  }
+  .btn-danger:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #991B1B;
+  }
+
+  /* Ghost — 테두리 (닫기, 취소 등) */
+  .btn-ghost {
+    background: #fff;
+    color: #555;
+    border: 1.5px solid #ddd;
+    box-shadow: 0 5px 0 #C8C8C6;
+  }
+  .btn-ghost:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #C8C8C6;
+  }
+
+  /* Disabled */
+  .btn:disabled, .btn-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: grayscale(0.3);
+  }
+
+  /* Loading */
+  .btn-loading {
+    opacity: 0.7;
+    cursor: wait;
+    transform: none !important;
+  }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .spinner-dark {
+    border-color: rgba(0,0,0,0.2);
+    border-top-color: #555;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Row layout */
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; }
+
+  /* Stack */
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+
+  /* Dark surface preview */
+  .dark-surface {
+    background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+    border-radius: 20px;
+    padding: 24px 16px;
+    margin-top: 8px;
+  }
+
+  .label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+  .label-dark { color: rgba(255,255,255,0.4); }
+
+  .usage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .usage-table th { text-align: left; padding: 6px 8px; background: #eee; font-weight: 600; font-size: 11px; color: #666; }
+  .usage-table td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+  .usage-table tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag-primary { background: #FFF0E6; color: #F97316; }
+  .tag-white { background: #333; color: #fff; }
+  .tag-secondary { background: #EBEBEA; color: #555; }
+  .tag-danger { background: #FEE2E2; color: #DC2626; }
+  .tag-ghost { background: #f0f0f0; color: #777; border: 1px solid #ddd; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>버튼 디자인 시스템</h1>
+  <p class="subtitle">SayNow · 전체 앱 공통 버튼 규칙</p>
+
+  <!-- SIZE -->
+  <div class="section">
+    <div class="section-title">Size</div>
+    <div class="stack">
+      <div>
+        <div class="label">lg · h-14 · 주요 페이지 하단 CTA</div>
+        <button class="btn btn-lg btn-primary">도전할게요 →</button>
+      </div>
+      <div>
+        <div class="label">md · h-12 · 카드 내 CTA, 팝업 버튼</div>
+        <button class="btn btn-md btn-primary">시작할게요</button>
+      </div>
+      <div>
+        <div class="label">sm · h-10 · 인라인 보조 버튼</div>
+        <button class="btn btn-sm btn-secondary">다시 듣기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR VARIANTS (밝은 배경) -->
+  <div class="section">
+    <div class="section-title">Color Variant — 밝은 배경</div>
+    <div class="stack">
+      <div>
+        <div class="label">Primary · 메인 CTA</div>
+        <button class="btn btn-lg btn-primary">피드백 보기</button>
+      </div>
+      <div>
+        <div class="label">Secondary · 보조 액션</div>
+        <button class="btn btn-lg btn-secondary">닫기</button>
+      </div>
+      <div>
+        <div class="label">Ghost · 취소 / 선택지</div>
+        <button class="btn btn-lg btn-ghost">취소</button>
+      </div>
+      <div>
+        <div class="label">Danger · 비가역 액션</div>
+        <button class="btn btn-md btn-danger">탈퇴하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHITE VARIANT (어두운 배경) -->
+  <div class="section">
+    <div class="section-title">White Variant — 이미지/어두운 배경 전용</div>
+    <div class="dark-surface">
+      <div class="label label-dark">브리핑 화면 · 풀스크린 이미지 위</div>
+      <button class="btn btn-lg btn-white">도전할게요 →</button>
+    </div>
+  </div>
+
+  <!-- ROW LAYOUT -->
+  <div class="section">
+    <div class="section-title">Row — 두 버튼 나란히</div>
+    <div class="stack">
+      <div>
+        <div class="label">Ghost + Primary (팝업 확인)</div>
+        <div class="btn-row">
+          <button class="btn btn-md btn-ghost">닫기</button>
+          <button class="btn btn-md btn-primary">확인할게요</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Ghost + Danger (탈퇴 확인)</div>
+        <div class="btn-row">
+          <button class="btn btn-md btn-ghost">취소</button>
+          <button class="btn btn-md btn-danger">탈퇴하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATES -->
+  <div class="section">
+    <div class="section-title">States</div>
+    <div class="stack">
+      <div>
+        <div class="label">Loading</div>
+        <button class="btn btn-lg btn-primary btn-loading">
+          <span class="spinner"></span>
+          <span>분석 중...</span>
+        </button>
+      </div>
+      <div>
+        <div class="label">Disabled</div>
+        <button class="btn btn-lg btn-primary btn-disabled" disabled>도전할게요 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D PRESS 설명 -->
+  <div class="section">
+    <div class="section-title">3D Press Effect — 규칙</div>
+    <div style="font-size:13px; color:#555; line-height:1.7; background:#fff; border-radius:14px; padding:16px; border:1px solid #e5e5e5;">
+      <p>모든 버튼은 동일한 3D 눌림 규칙을 따릅니다.</p>
+      <br>
+      <p><strong>기본 상태</strong></p>
+      <p style="color:#888">box-shadow: 0 5px 0 [버튼색의 진한 버전]</p>
+      <br>
+      <p><strong>눌린 상태 (:active)</strong></p>
+      <p style="color:#888">transform: translateY(3px)</p>
+      <p style="color:#888">box-shadow: 0 2px 0 [버튼색의 진한 버전]</p>
+      <br>
+      <p><strong>shadow 색 규칙</strong></p>
+      <table style="width:100%; font-size:12px; margin-top:6px; border-collapse:collapse;">
+        <tr style="color:#999;"><td style="padding:3px 0;">Primary</td><td style="padding:3px 0; color:#555">#C25A0E (주황 darken 25%)</td></tr>
+        <tr style="color:#999;"><td style="padding:3px 0;">White</td><td style="padding:3px 0; color:#555">rgba(255,255,255,0.45)</td></tr>
+        <tr style="color:#999;"><td style="padding:3px 0;">Secondary</td><td style="padding:3px 0; color:#555">#C8C8C6 (회색 darken)</td></tr>
+        <tr style="color:#999;"><td style="padding:3px 0;">Danger</td><td style="padding:3px 0; color:#555">#991B1B (red-900)</td></tr>
+        <tr style="color:#999;"><td style="padding:3px 0;">Ghost</td><td style="padding:3px 0; color:#555">#C8C8C6 (border darken)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 사용 위치 -->
+  <div class="section">
+    <div class="section-title">페이지별 사용 위치</div>
+    <table class="usage-table">
+      <tr>
+        <th>페이지</th>
+        <th>버튼</th>
+        <th>타입</th>
+      </tr>
+      <tr>
+        <td>홈 팝오버</td>
+        <td>시작할게요</td>
+        <td><span class="tag tag-primary">Primary md</span></td>
+      </tr>
+      <tr>
+        <td>브리핑</td>
+        <td>도전할게요 →</td>
+        <td><span class="tag tag-white">White lg</span></td>
+      </tr>
+      <tr>
+        <td>대화 · 마이크</td>
+        <td>탭하여 말하기</td>
+        <td><span class="tag tag-primary">Primary lg</span></td>
+      </tr>
+      <tr>
+        <td>대화 · 결과</td>
+        <td>결과 보기</td>
+        <td><span class="tag tag-primary">Primary lg</span></td>
+      </tr>
+      <tr>
+        <td>피드백</td>
+        <td>홈으로 가기</td>
+        <td><span class="tag tag-primary">Primary lg</span></td>
+      </tr>
+      <tr>
+        <td>탈퇴 확인</td>
+        <td>취소 / 탈퇴하기</td>
+        <td><span class="tag tag-ghost">Ghost md</span> <span class="tag tag-danger">Danger md</span></td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

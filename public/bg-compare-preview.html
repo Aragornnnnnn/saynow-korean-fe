@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>배경 비교</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #222; display: flex; gap: 2px; height: 100dvh; overflow: hidden; }
+
+  .phone {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .label {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* 공통 배경 그라데이션 */
+  .bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #FAFAF8 50%, #E8DDD0 100%);
+  }
+
+  /* 배경 이미지 레이어 */
+  .bg-img {
+    position: absolute;
+    background-image: url('/background1.png');
+    background-size: cover;
+    background-position: center top;
+    opacity: 0.28;
+    filter: sepia(12%) brightness(1.05);
+    pointer-events: none;
+  }
+
+  /* A: 전체 */
+  .phone-a .bg-img { inset: 0; }
+
+  /* B: 칩(카테고리 필터) 아래만 — 헤더 높이 약 100px 제외 */
+  .phone-b .bg-img {
+    top: 100px;
+    left: 0; right: 0; bottom: 0;
+    /* 위쪽에 페이드 처리 */
+  }
+  .phone-b .bg-img-fade {
+    position: absolute;
+    top: 100px;
+    left: 0; right: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, #FAFAF8, transparent);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* 헤더 */
+  .header {
+    position: relative;
+    z-index: 10;
+    padding: 52px 16px 12px;
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .logo { font-size: 22px; font-weight: 800; color: #111; }
+  .me-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    font-size: 11px;
+    color: #888;
+    background: rgba(255,255,255,0.7);
+  }
+
+  /* 카테고리 칩 */
+  .chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+  }
+  .chip.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+
+  /* 시나리오 영역 */
+  .scenario-area {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 28px;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  /* 뱃지 아이템 */
+  .badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .badge {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #e8ddd0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    border: 3px solid rgba(255,255,255,0.8);
+  }
+  .badge-title {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+  .dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 10px 0;
+  }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: #ccc; }
+</style>
+</head>
+<body>
+
+<!-- A: 전체 이미지 -->
+<div class="phone phone-a">
+  <div class="label">A · 전체 배경</div>
+  <div class="bg-gradient"></div>
+  <div class="bg-img"></div>
+
+  <div class="header">
+    <div class="header-row">
+      <span class="logo">SayNow</span>
+      <span class="me-btn">👤 내 정보</span>
+    </div>
+    <div class="chips">
+      <div class="chip active">전체</div>
+      <div class="chip">공항</div>
+      <div class="chip">쇼핑</div>
+      <div class="chip">식당</div>
+    </div>
+  </div>
+
+  <div class="scenario-area">
+    <div class="badge-item">
+      <div class="badge">🛂</div>
+      <div class="badge-title">입국심사 받기</div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="badge-item">
+      <div class="badge">🧳</div>
+      <div class="badge-title">수화물 찾기</div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="badge-item">
+      <div class="badge">✈️</div>
+      <div class="badge-title">환승 안내 받기</div>
+    </div>
+  </div>
+</div>
+
+<!-- B: 칩 아래만 이미지 -->
+<div class="phone phone-b">
+  <div class="label">B · 칩 아래만</div>
+  <div class="bg-gradient"></div>
+  <div class="bg-img"></div>
+  <div class="bg-img-fade"></div>
+
+  <div class="header">
+    <div class="header-row">
+      <span class="logo">SayNow</span>
+      <span class="me-btn">👤 내 정보</span>
+    </div>
+    <div class="chips">
+      <div class="chip active">전체</div>
+      <div class="chip">공항</div>
+      <div class="chip">쇼핑</div>
+      <div class="chip">식당</div>
+    </div>
+  </div>
+
+  <div class="scenario-area">
+    <div class="badge-item">
+      <div class="badge">🛂</div>
+      <div class="badge-title">입국심사 받기</div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="badge-item">
+      <div class="badge">🧳</div>
+      <div class="badge-title">수화물 찾기</div>
+    </div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="badge-item">
+      <div class="badge">✈️</div>
+      <div class="badge-title">환승 안내 받기</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

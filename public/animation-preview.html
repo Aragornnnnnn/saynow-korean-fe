@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SayNow — 애니메이션 프리뷰</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
+    background: #f5f5f3;
+    color: #111;
+    padding: 32px 20px 80px;
+  }
+
+  .section { margin-bottom: 56px; }
+  .section-label {
+    font-size: 11px; font-weight: 700; color: #9ca3af;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: #e5e5e0; }
+
+  .row { display: flex; gap: 36px; align-items: flex-end; flex-wrap: wrap; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .col-label { font-size: 11px; color: #9ca3af; font-weight: 500; }
+
+  /* 버튼 베이스 */
+  .badge {
+    width: 88px; height: 88px;
+    border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    cursor: pointer;
+    border: none; outline: none;
+    font-size: 30px;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+  }
+  .badge:active { transform: translateY(4px); }
+
+  .badge-normal {
+    background: #FFF4ED;
+    box-shadow: 0 6px 0 #e8b48e;
+    transition: box-shadow 0.1s, transform 0.1s;
+  }
+  .badge-normal:active { box-shadow: 0 2px 0 #e8b48e; }
+
+  .badge-cleared {
+    background: #FFF4ED;
+    box-shadow: 0 6px 0 #e8b48e;
+    transition: box-shadow 0.1s, transform 0.1s;
+  }
+  .badge-cleared:active { box-shadow: 0 2px 0 #e8b48e; }
+
+  .badge-locked {
+    background: #E0E0DC;
+    box-shadow: 0 6px 0 #9ca3af;
+    transition: box-shadow 0.1s, transform 0.1s;
+  }
+  .badge-locked:active { box-shadow: 0 2px 0 #9ca3af; }
+
+  /* 순서 뱃지 */
+  .order-badge {
+    position: absolute; bottom: -2px; right: -2px;
+    width: 20px; height: 20px; border-radius: 9999px;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .order-badge-active { background: #e07a3a; color: #fff; }
+  .order-badge-locked { background: #e5e5e0; color: #6b7280; }
+
+  /* lock 오버레이 */
+  .lock-overlay {
+    position: absolute; inset: 0; border-radius: 9999px;
+    background: rgba(255,255,255,0.6);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .emoji-faded { opacity: 0.4; }
+
+  /* shimmer — 다음 깨야 할 버튼 전용 */
+  @keyframes badge-shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .badge-target {
+    background: #FFF4ED;
+    box-shadow: 0 6px 0 #e8b48e;
+    transition: box-shadow 0.1s, transform 0.1s;
+  }
+  .badge-target:active { box-shadow: 0 2px 0 #e8b48e; }
+  .badge-target::after {
+    content: '';
+    position: absolute; inset: 0; border-radius: 9999px;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: badge-shimmer 2.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* B: unlock */
+  @keyframes unlock-pop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    60%  { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+  .unlock-emoji { animation: unlock-pop 0.55s ease-out forwards; }
+
+  /* C: 입장 */
+  @keyframes badge-enter {
+    0%   { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .enter-1 { animation: badge-enter 0.4s cubic-bezier(0.22,1,0.36,1) 0s both; }
+  .enter-2 { animation: badge-enter 0.4s cubic-bezier(0.22,1,0.36,1) 0.12s both; }
+  .enter-3 { animation: badge-enter 0.4s cubic-bezier(0.22,1,0.36,1) 0.24s both; }
+
+  /* E: 팝오버 카드 뽈록 */
+  @keyframes popover-in {
+    0%   { opacity: 0; transform: scale(0.88) translateY(-8px); }
+    60%  { opacity: 1; transform: scale(1.03) translateY(1px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes popover-out {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.92) translateY(-6px); }
+  }
+  .popover-wrap {
+    position: relative; width: 280px;
+    transform-origin: top center;
+    animation: popover-in 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  .popover-arrow {
+    position: absolute; top: -6px;
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 9px solid #e07a3a;
+    left: 50%; transform: translateX(-50%);
+  }
+  .popover-card {
+    background: #e07a3a; border-radius: 16px;
+    padding: 16px 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .popover-goal-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .popover-goal-text  { font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 14px; }
+  .popover-btn {
+    width: 100%; padding: 12px;
+    background: #fff; color: #111;
+    border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+
+  .replay-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 16px;
+    padding: 6px 14px;
+    background: #fff; border: 1px solid #e5e5e0;
+    border-radius: 8px; font-size: 12px; font-weight: 600; color: #6b7280;
+    cursor: pointer; user-select: none;
+  }
+  .replay-btn:hover { background: #f5f5f3; }
+
+  /* 점선 커넥터 */
+  .connector { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 10px 0; }
+  .dot { width: 5px; height: 5px; border-radius: 99px; background: #e5e5e0; }
+
+  hr { border: none; border-top: 1px solid #e5e5e0; margin: 48px 0; }
+</style>
+</head>
+<body>
+
+<!-- A → shimmer: 다음 타깃 버튼 -->
+<div class="section">
+  <div class="section-label">shimmer — 다음 깨야 할 버튼</div>
+  <div class="row">
+    <div class="col">
+      <button class="badge badge-cleared">
+        ✈️
+        <span class="order-badge order-badge-active">✓</span>
+      </button>
+      <span class="col-label">클리어 (shimmer 없음)</span>
+    </div>
+    <div class="col">
+      <button class="badge badge-target">
+        🏨
+        <span class="order-badge order-badge-active">2</span>
+      </button>
+      <span class="col-label">다음 타깃 (shimmer)</span>
+    </div>
+    <div class="col">
+      <button class="badge badge-locked">
+        <span class="emoji-faded">🍽️</span>
+        <div class="lock-overlay">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <span class="order-badge order-badge-locked">3</span>
+      </button>
+      <span class="col-label">잠김</span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- B: unlock -->
+<div class="section">
+  <div class="section-label">B — 자물쇠 → 이모지 Unlock</div>
+  <div class="row">
+    <div class="col">
+      <button class="badge badge-locked" id="locked-btn" style="cursor:default;">
+        <span class="emoji-faded" id="locked-emoji">🏨</span>
+        <div class="lock-overlay" id="lock-overlay">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <span class="order-badge order-badge-locked" id="order-unlock">2</span>
+      </button>
+      <span class="col-label">잠김 → unlock</span>
+      <button class="replay-btn" id="unlock-trigger">🔓 재생</button>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- C: 입장 -->
+<div class="section">
+  <div class="section-label">C — 리스트 입장</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:0;width:fit-content;">
+    <div class="col enter-1" id="e1">
+      <button class="badge badge-cleared">✈️<span class="order-badge order-badge-active">✓</span></button>
+      <span class="col-label" style="margin-top:4px;">공항 체크인</span>
+    </div>
+    <div class="connector"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="col enter-2" id="e2">
+      <button class="badge badge-target">🏨<span class="order-badge order-badge-active">2</span></button>
+      <span class="col-label" style="margin-top:4px;">호텔 체크인</span>
+    </div>
+    <div class="connector"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="col enter-3" id="e3">
+      <button class="badge badge-locked">
+        <span class="emoji-faded">🍽️</span>
+        <div class="lock-overlay">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <span class="order-badge order-badge-locked">3</span>
+      </button>
+      <span class="col-label" style="margin-top:4px;">???</span>
+    </div>
+  </div>
+  <button class="replay-btn" id="enter-replay">↺ 다시 재생</button>
+</div>
+
+<hr>
+
+<!-- E: 팝오버 카드 뽈록 -->
+<div class="section">
+  <div class="section-label">E — 팝오버 카드</div>
+  <div class="popover-wrap">
+    <div class="popover-arrow" id="popover-arrow"></div>
+    <div class="popover-card">
+      <p class="popover-goal-label">달성 목표</p>
+      <p class="popover-goal-text">공항 체크인 카운터에서 수하물을 부치고 탑승권을 받아요.</p>
+      <button class="popover-btn">시작할게요 ›</button>
+    </div>
+  </div>
+  <button class="replay-btn" id="popover-replay">↺ 다시 재생</button>
+</div>
+
+<script>
+  // B: unlock
+  const unlockBtn  = document.getElementById('unlock-trigger');
+  const lockOverlay = document.getElementById('lock-overlay');
+  const lockedEmoji = document.getElementById('locked-emoji');
+  const orderUnlock = document.getElementById('order-unlock');
+  const lockedBadge = document.getElementById('locked-btn');
+
+  function resetUnlock() {
+    lockOverlay.style.display = 'flex';
+    lockOverlay.style.opacity = '1';
+    lockOverlay.style.transition = '';
+    lockedEmoji.style.opacity = '0.4';
+    lockedEmoji.classList.remove('unlock-emoji');
+    lockedBadge.className = 'badge badge-locked';
+    orderUnlock.className = 'order-badge order-badge-locked';
+  }
+
+  unlockBtn.addEventListener('click', () => {
+    resetUnlock();
+    setTimeout(() => {
+      lockOverlay.style.transition = 'opacity 0.2s';
+      lockOverlay.style.opacity = '0';
+      setTimeout(() => {
+        lockOverlay.style.display = 'none';
+        lockedBadge.className = 'badge badge-target';
+        lockedEmoji.style.opacity = '1';
+        lockedEmoji.classList.add('unlock-emoji');
+        orderUnlock.className = 'order-badge order-badge-active';
+        setTimeout(() => lockedEmoji.classList.remove('unlock-emoji'), 600);
+      }, 220);
+    }, 60);
+  });
+
+  // C: 입장 재생
+  document.getElementById('enter-replay').addEventListener('click', () => {
+    ['e1','e2','e3'].forEach(id => {
+      const el = document.getElementById(id);
+      const cls = el.classList[1]; // enter-N
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+  });
+
+  // E: 팝오버 재생
+  document.getElementById('popover-replay').addEventListener('click', () => {
+    const wrap = document.querySelector('.popover-wrap');
+    wrap.style.animation = 'none';
+    wrap.offsetHeight;
+    wrap.style.animation = 'popover-in 0.3s cubic-bezier(0.22,1,0.36,1) forwards';
+  });
+</script>
+</body>
+</html>
