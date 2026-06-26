@@ -19,16 +19,20 @@
 - [x] 메타데이터/OG/lang 한국어 학습용으로 (브랜드명 Landit 유지)
 
 ## Phase C — 실서비스 연결 (사용자 값/계정 필요)
+- [x] Deepgram 키 재사용 → `.env.local` (saynow-fe와 동일)
+- [x] OAuth(Google/Kakao) 키 재사용 → `.env.local` (앱 공유, 콜백만 추가 예정)
 - [ ] **Amplitude 신규 키** → `.env.local` + Vercel env  〔너한테 받을 것 · 지표 핵심〕
 - [ ] **한국어 백엔드 URL** → `NEXT_PUBLIC_API_BASE_URL` 교체 (목업→실서버)  〔너한테 받을 것〕
-- [ ] **OAuth 신규 앱**(Google/Kakao) → client id/secret + 새 도메인 redirect URI  〔너한테 받을 것〕
+- [ ] OAuth 콜백 URL 추가 — 배포 도메인 나오면 Google/Kakao 콘솔에 redirect URI 등록  〔네가 콘솔에서〕
 - [ ] 약관/개인정보 본문(legalDocuments.ts) 영어화 — 법무 검토 필요, 보류
 - [ ] (잔여·사소) stt/token 라우트 에러 문구, analytics/events.ts 점검
+- [ ] 시나리오 이미지 교체 (현재 원본 에셋) — 새 이미지 대기
 
 ## Phase D — 배포 & 마케팅 지표
-- [ ] GitHub origin 푸시 (현재 보류 — 로컬만)
-- [ ] Vercel 레포 import + 빌드 (next build)
-- [ ] Vercel env 설정 (위 키들)
+- [x] GitHub origin 푸시 (main)
+- [ ] Vercel 레포 import + 빌드 (next build)  〔네가 대시보드에서〕
+- [ ] Vercel env 설정 (재사용 키 + 신규 Amplitude/백엔드)
+- [ ] 배포 도메인 확인 → OAuth 콜백 URL 등록
 - [ ] 배포 후 Amplitude 이벤트 수집 확인
 - [ ] Meta Ads / 광고 픽셀 연결 (선택, `docs/meta-ads-setup.md` 참고)
 - [ ] 마케팅 퍼널 지표 대시보드 확인
