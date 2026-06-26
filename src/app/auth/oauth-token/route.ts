@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const body = (await request.json()) as Partial<OAuthTokenRequest>;
 
   if (!body.provider || !body.code || !body.redirectUri) {
-    return NextResponse.json({ error: '요청 값이 올바르지 않습니다.' }, { status: 400 });
+    return NextResponse.json({ error: 'The request is missing required values.' }, { status: 400 });
   }
 
   try {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ idToken });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : '소셜 로그인 토큰 교환에 실패했습니다.' },
+      { error: error instanceof Error ? error.message : 'Social login token exchange failed.' },
       { status: 400 },
     );
   }
@@ -44,7 +44,7 @@ async function exchangeCodeForIdToken(body: OAuthTokenRequest) {
 
   const idToken = tokenResponse.id_token ?? tokenResponse.idToken;
   if (!idToken) {
-    throw new Error(tokenResponse.error_description ?? tokenResponse.error ?? 'ID token을 받지 못했습니다.');
+    throw new Error(tokenResponse.error_description ?? tokenResponse.error ?? 'No ID token was returned.');
   }
 
   return idToken;
@@ -57,10 +57,10 @@ async function exchangeGoogleCode(body: OAuthTokenRequest) {
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
   if (!clientId) {
-    throw new Error('Google OAuth client ID가 설정되지 않았습니다.');
+    throw new Error('Google OAuth client ID is not configured.');
   }
   if (!body.codeVerifier) {
-    throw new Error('Google OAuth code verifier가 없습니다.');
+    throw new Error('Google OAuth code verifier is missing.');
   }
 
   const params: Record<string, string> = {
@@ -82,7 +82,7 @@ async function exchangeKakaoCode(body: OAuthTokenRequest) {
   const clientId = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
   const clientSecret = process.env.KAKAO_CLIENT_SECRET;
   if (!clientId) {
-    throw new Error('Kakao REST API 키가 설정되지 않았습니다.');
+    throw new Error('Kakao REST API key is not configured.');
   }
 
   const params: Record<string, string> = {
@@ -108,7 +108,7 @@ async function postTokenRequest(url: string, params: Record<string, string>) {
   const json = (await response.json()) as OAuthTokenResponse;
 
   if (!response.ok) {
-    throw new Error(json.error_description ?? json.error ?? '소셜 로그인 토큰 교환에 실패했습니다.');
+    throw new Error(json.error_description ?? json.error ?? 'Social login token exchange failed.');
   }
 
   return json;

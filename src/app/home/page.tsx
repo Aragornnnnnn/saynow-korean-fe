@@ -118,7 +118,7 @@ function Home() {
         <div className="space-y-4 text-center">
           <p className="text-muted-foreground">{error.message}</p>
           <button onClick={() => refetch()} className="text-sm font-medium text-primary">
-            다시 시도
+            Try again
           </button>
         </div>
       </main>
@@ -142,7 +142,7 @@ function Home() {
       >
         <div className="flex items-center gap-2">
           <span className="tossface text-[22px] leading-none">🗂️</span>
-          <span className="text-[17px] font-semibold" style={{ color: '#111' }}>대화 목록</span>
+          <span className="text-[17px] font-semibold" style={{ color: '#111' }}>Conversations</span>
         </div>
         <div className="flex items-center">
           <FeedbackButton />
@@ -151,7 +151,7 @@ function Home() {
               <circle cx="12" cy="8" r="4" />
               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
-            <span className="text-[10px] font-medium" style={{ color: '#888' }}>내 정보</span>
+            <span className="text-[10px] font-medium" style={{ color: '#888' }}>Profile</span>
           </Link>
         </div>
       </div>
@@ -231,16 +231,16 @@ function Home() {
                   <>
                     <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.gif" alt="🎉" style={{ width: 120, height: 120 }} />
                     <div className="text-center px-6">
-                      <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>세 상황을 모두 해보셨네요!</p>
-                      <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>더 많은 상황으로 곧 찾아올게요!</p>
+                      <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>You did all three!</p>
+                      <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>More situations coming soon!</p>
                     </div>
                   </>
                 ) : (
                   <>
                     <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2753/512.gif" alt="❓" style={{ width: 120, height: 120 }} />
                     <div className="text-center px-6">
-                      <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>다음 상황이 기다리고 있어요</p>
-                      <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>먼저 세 개의 대화를 모두 끝내보세요!</p>
+                      <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>The next situation is waiting</p>
+                      <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>Finish all three conversations first!</p>
                     </div>
                   </>
                 )}
@@ -287,7 +287,7 @@ function ScenarioCard({ scenario, onStart, isUnlocking = false }: { scenario: Ap
         {isComingSoon && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40">
             <span className="text-3xl">☁️</span>
-            <span className="text-sm font-bold text-white">준비 중이에요</span>
+            <span className="text-sm font-bold text-white">Coming soon</span>
           </div>
         )}
       </div>
@@ -307,18 +307,18 @@ function ScenarioCard({ scenario, onStart, isUnlocking = false }: { scenario: Ap
         <div>
           {isLocked ? (
             <div
-              onClick={() => { track(EVENTS.SCENARIO_LOCKED_TAPPED, { scenario_id: scenario.scenarioId, lock_reason: scenario.lockReason?.toLowerCase() ?? 'unknown' }); toast('앞선 시나리오를 먼저 클리어해봐요!'); }}
+              onClick={() => { track(EVENTS.SCENARIO_LOCKED_TAPPED, { scenario_id: scenario.scenarioId, lock_reason: scenario.lockReason?.toLowerCase() ?? 'unknown' }); toast('Clear the earlier scenarios first!'); }}
               className="flex w-full h-14 items-center justify-center gap-1.5 rounded-2xl text-base font-bold cursor-pointer"
               style={{ background: '#EBEBEA', color: '#AAAAAA' }}
             >
-              잠겨있어요&nbsp;<Lock size={16} />
+              Locked&nbsp;<Lock size={16} />
             </div>
           ) : (
             <Button
               onClick={() => onStart(scenario)}
               variant={isCompleted ? 'secondary' : 'primary'}
             >
-              {isCompleted ? <>다시 해볼게요&nbsp;<ArrowRight size={16} /></> : <>시작할게요&nbsp;<ArrowRight size={16} /></>}
+              {isCompleted ? <>Try again&nbsp;<ArrowRight size={16} /></> : <>Start&nbsp;<ArrowRight size={16} /></>}
             </Button>
           )}
         </div>

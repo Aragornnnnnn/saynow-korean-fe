@@ -27,12 +27,12 @@ function IosPermissionPreview() {
         <div className="px-5 pb-5 pt-6 text-center">
           <div className="space-y-2">
             <p className="text-[19px] font-semibold leading-snug">
-              'Landit'이(가)
+              &ldquo;Landit&rdquo; Would Like to
               <br />
-              마이크에 접근하려고 합니다.
+              Access the Microphone
             </p>
             <p className="text-[14px] leading-snug text-[var(--onboarding-muted)]">
-              음성 답변을 듣고 대화를 이어가기 위해 필요합니다.
+              Needed to hear your spoken replies and keep the conversation going.
             </p>
           </div>
         </div>
@@ -44,10 +44,10 @@ function IosPermissionPreview() {
             className="flex items-center justify-center border-r text-[#007AFF] opacity-60"
             style={{ borderColor: 'var(--onboarding-line)' }}
           >
-            허용 안 함
+            Don&apos;t Allow
           </div>
           <div className="flex items-center justify-center font-semibold text-[#007AFF]">
-            허용
+            Allow
           </div>
         </div>
       </div>
@@ -67,15 +67,15 @@ function AndroidPermissionPreview() {
           <span className="-ml-0.5 h-1.5 w-1.5 rounded-full bg-white/80" />
         </div>
         <p className="mx-auto max-w-[264px] text-[16px] font-semibold leading-snug">
-          Landit에서 오디오를 녹음하도록 허용하시겠습니까?
+          Allow Landit to record audio?
         </p>
         <div className="mt-7 space-y-1 text-[20px] font-bold leading-none">
           <div className="relative flex h-14 w-full items-center justify-center">
-            앱 사용 중에만 허용
+            While using the app
             <span className="tossface pointer-events-none absolute right-0 text-[34px] leading-none">👈</span>
           </div>
-          <div className="flex h-14 items-center justify-center opacity-40">이번만 허용</div>
-          <div className="flex h-14 items-center justify-center opacity-40">허용 안함</div>
+          <div className="flex h-14 items-center justify-center opacity-40">Only this time</div>
+          <div className="flex h-14 items-center justify-center opacity-40">Don&apos;t allow</div>
         </div>
       </div>
     </div>

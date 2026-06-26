@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/Button';
 import { ThoughtCard, type FloatingThought } from '@/components/chat/ThoughtOverlay';
 
 const DEMOS: FloatingThought[] = [
-  { type: 'GOOD', text: '오, 이유까지 말해주네. 대화 잘 통한다!' },
-  { type: 'NORMAL', text: '무슨 말인지 알겠어. 잘 전해졌어.' },
-  { type: 'BAD', text: '살짝 갸웃했어. 다음엔 천천히 말해줘!' },
+  { type: 'GOOD', text: 'Ooh, they even gave a reason. This chat is flowing!' },
+  { type: 'NORMAL', text: 'Got it, I understood you just fine.' },
+  { type: 'BAD', text: 'Hmm, I was a little lost there. Try going slower next time!' },
 ];
 
 export function ThoughtStep({ onNext }: { onNext: () => void }) {
@@ -25,9 +25,9 @@ export function ThoughtStep({ onNext }: { onNext: () => void }) {
     <>
       <div className="flex flex-1 flex-col pt-7">
         <h1 className="text-[30px] font-black leading-[1.18] tracking-normal">
-          말할 때마다 나와서
+          Every time you speak, I&apos;ll pop up
           <br />
-          상대 속마음을 대신 알려줄게요
+          to share what they&apos;re really thinking
         </h1>
 
         <div className="flex flex-1 flex-col items-center justify-center">
@@ -48,7 +48,7 @@ export function ThoughtStep({ onNext }: { onNext: () => void }) {
         </div>
       </div>
 
-      <Button onClick={onNext}>이해했어요!</Button>
+      <Button onClick={onNext}>Got it!</Button>
     </>
   );
 }

@@ -39,14 +39,14 @@ export default function MyPage() {
         return 0;
       }
       const remaining = 6 - next;
-      if (remaining <= 3) toast(`${remaining}번 더 탭하면 실험실이 열려요`);
+      if (remaining <= 3) toast(`Tap ${remaining} more times to open the lab`);
       return next;
     });
   }
 
   if (!isReady) return null;
 
-  const displayName = member?.nickname?.trim() || 'Landit 사용자';
+  const displayName = member?.nickname?.trim() || 'Landit user';
   const emailText = member?.email ?? '';
 
   function finishSignedOut() {
@@ -78,7 +78,7 @@ export default function MyPage() {
       track(EVENTS.ACCOUNT_DELETION_COMPLETED);
       finishSignedOut();
     } catch (error) {
-      const message = error instanceof Error ? error.message : '회원탈퇴에 실패했습니다.';
+      const message = error instanceof Error ? error.message : 'Something went wrong deleting your account.';
       setDeleteErrorMessage(message);
     } finally {
       setIsDeletingAccount(false);
@@ -107,12 +107,12 @@ export default function MyPage() {
           onClick={goHome}
           className="flex h-9 w-9 items-center justify-center rounded-full transition-all active:scale-90 active:bg-zinc-200"
           style={{ color: '#444', marginLeft: -4 }}
-          aria-label="뒤로 가기"
+          aria-label="Go back"
         >
           <ChevronLeft size={22} strokeWidth={2} />
         </button>
         <h1 className="absolute left-1/2 -translate-x-1/2 text-[17px] font-semibold" style={{ color: '#111' }}>
-          내 정보
+          Profile
         </h1>
       </header>
 
@@ -139,8 +139,8 @@ export default function MyPage() {
           </div>
 
           <div className="mt-4 flex gap-2">
-            <StatChip label="연습 횟수" value={`${member?.userId ? '-' : '0'}회`} />
-            <StatChip label="로그인" value={getProviderLabel(member?.provider)} onClick={handleLabTap} />
+            <StatChip label="Sessions" value={`${member?.userId ? '-' : '0'}`} />
+            <StatChip label="Login" value={getProviderLabel(member?.provider)} onClick={handleLabTap} />
           </div>
         </div>
 
@@ -148,19 +148,19 @@ export default function MyPage() {
         <div className="px-4 pb-8 space-y-3">
           {/* 약관 그룹 */}
           <MenuGroup>
-            <MenuLink href="/me/privacy" title="개인정보 처리방침" />
-            <MenuLink href="/me/terms" title="서비스 이용약관" />
+            <MenuLink href="/me/privacy" title="Privacy Policy" />
+            <MenuLink href="/me/terms" title="Terms of Service" />
           </MenuGroup>
 
           {/* 계정 관리 */}
           <MenuGroup>
             <MenuButton
-              title={isLoggingOut ? '로그아웃 중...' : '로그아웃'}
+              title={isLoggingOut ? 'Logging out...' : 'Log out'}
               onClick={handleLogout}
               disabled={isLoggingOut}
             />
             <MenuButton
-              title="회원탈퇴"
+              title="Delete account"
               tone="danger"
               onClick={() => {
                 setDeleteErrorMessage(null);
@@ -173,9 +173,9 @@ export default function MyPage() {
 
       {/* 회원탈퇴 확인 바텀시트 */}
       <BottomSheet open={isDeleteSheetOpen} onClose={() => !isDeletingAccount && setIsDeleteSheetOpen(false)}>
-        <h2 className="text-[17px] font-bold" style={{ color: '#111' }}>회원탈퇴</h2>
+        <h2 className="text-[17px] font-bold" style={{ color: '#111' }}>Delete account</h2>
         <p className="mt-2 text-[14px] leading-6" style={{ color: '#666' }}>
-          계정과 이용 기록이 삭제됩니다. 계속 진행할까요?
+          Your account and activity history will be deleted. Want to continue?
         </p>
         {deleteErrorMessage && (
           <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600">
@@ -190,7 +190,7 @@ export default function MyPage() {
             onClick={() => setIsDeleteSheetOpen(false)}
             disabled={isDeletingAccount}
           >
-            닫기
+            Cancel
           </Button>
           <Button
             type="button"
@@ -200,7 +200,7 @@ export default function MyPage() {
             loading={isDeletingAccount}
             disabled={isDeletingAccount}
           >
-            {isDeletingAccount ? '처리 중' : '탈퇴할게요'}
+            {isDeletingAccount ? 'Working...' : 'Delete'}
           </Button>
         </div>
       </BottomSheet>
@@ -276,8 +276,8 @@ function MenuButton({
 
 function getProviderLabel(provider?: string) {
   switch (provider) {
-    case 'GOOGLE': return '구글';
-    case 'KAKAO': return '카카오';
+    case 'GOOGLE': return 'Google';
+    case 'KAKAO': return 'Kakao';
     default: return '-';
   }
 }

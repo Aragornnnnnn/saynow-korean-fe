@@ -7,9 +7,9 @@ import { Lock } from 'lucide-react';
 import { getScenarioImage } from '@/lib/scenarioImages';
 
 const MOCK_SCENARIOS = [
-  { scenarioId: 4, scenarioTitle: '공항 입국심사', briefing: '해외 공항에 도착해서 입국 심사대를 통과해야 해요. 심사관의 질문에 자연스럽게 대답해봐요.', locked: false, completed: true, lockReason: null },
-  { scenarioId: 5, scenarioTitle: '카페 주문하기', briefing: '뉴욕 브루클린의 작은 카페에 들어섰어요. 원하는 음료를 주문하고 커스텀 요청도 해봐요.', locked: false, completed: false, lockReason: null },
-  { scenarioId: 6, scenarioTitle: '호텔 체크인', briefing: '예약한 호텔에 도착했어요. 프런트 직원과 체크인 절차를 진행해봐요.', locked: true, completed: false, lockReason: null },
+  { scenarioId: 4, scenarioTitle: 'Airport immigration', briefing: 'You’ve arrived at the airport and need to get through immigration. Answer the officer’s questions naturally.', locked: false, completed: true, lockReason: null },
+  { scenarioId: 5, scenarioTitle: 'Ordering at a cafe', briefing: 'You step into a cozy little cafe. Order the drink you want and try a custom request too.', locked: false, completed: false, lockReason: null },
+  { scenarioId: 6, scenarioTitle: 'Hotel check-in', briefing: 'You’ve arrived at the hotel you booked. Walk through the check-in with the front desk.', locked: true, completed: false, lockReason: null },
 ];
 
 const allCompleted = MOCK_SCENARIOS.every((s) => s.completed);
@@ -32,14 +32,14 @@ export default function CardPreview() {
           style={{ paddingTop: 16, paddingBottom: 8, borderBottom: '1px solid #ebebeb', background: '#fbfbfa' }}>
           <div className="flex items-center gap-2">
             <span className="tossface text-[22px] leading-none">🗂️</span>
-            <span className="text-[17px] font-bold" style={{ color: '#111' }}>대화 목록</span>
+            <span className="text-[17px] font-bold" style={{ color: '#111' }}>Conversations</span>
           </div>
           <button className="flex flex-col items-center gap-0.5">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="8" r="4" />
               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
-            <span className="text-[9px] font-medium" style={{ color: '#888' }}>내 정보</span>
+            <span className="text-[9px] font-medium" style={{ color: '#888' }}>Profile</span>
           </button>
         </div>
 
@@ -96,16 +96,16 @@ export default function CardPreview() {
               <>
                 <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.gif" alt="🎉" style={{ width: 120, height: 120 }} />
                 <div className="text-center px-6">
-                  <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>세 상황을 모두 해보셨네요!</p>
-                  <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>더 많은 상황으로 곧 찾아올게요!</p>
+                  <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>You did all three!</p>
+                  <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>More situations coming soon!</p>
                 </div>
               </>
             ) : (
               <>
                 <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2753/512.gif" alt="❓" style={{ width: 120, height: 120 }} />
                 <div className="text-center px-6">
-                  <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>다음 상황이 기다리고 있어요</p>
-                  <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>세 개를 모두 해보면 알 수 있어요!</p>
+                  <p className="text-[26px] font-extrabold leading-snug" style={{ color: '#222' }}>The next situation is waiting</p>
+                  <p className="text-[18px] font-medium mt-3" style={{ color: '#888' }}>Try all three to find out!</p>
                 </div>
               </>
             )}
@@ -156,7 +156,7 @@ function ScenarioCard({ scenario }: { scenario: typeof MOCK_SCENARIOS[0] }) {
           className="mt-4 w-full rounded-[14px] py-4 text-[17px] font-bold text-white transition-opacity disabled:opacity-40"
           style={{ background: isLocked ? '#ccc' : '#111' }}
         >
-          {isLocked ? '잠겨있어요' : '시작할게요'}
+          {isLocked ? 'Locked' : 'Start'}
         </button>
       </div>
     </div>

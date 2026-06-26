@@ -6,7 +6,7 @@ export default function TermsPage() {
     <LegalDocumentPage
       document={termsDocument}
       backHref="/me"
-      backLabel="내 정보로 돌아가기"
+      backLabel="Back to Profile"
     />
   );
 }

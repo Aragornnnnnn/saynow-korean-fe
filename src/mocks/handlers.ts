@@ -17,41 +17,41 @@ export const scenariosHandler = http.get(`${BASE}/scenarios`, () => {
             {
               scenarioId: 1,
               displayOrder: 1,
-              scenarioTitle: '음식 취향 이야기하기',
-              briefing: '좋아하는 음식과 최근 먹었던 음식에 대해 이야기합니다.',
-              conversationGoal: '음식 취향과 경험을 영어로 자연스럽게 설명할 수 있다.',
+              scenarioTitle: 'Talk about your food preferences',
+              briefing: 'Chat about the foods you love and what you ate recently.',
+              conversationGoal: 'Comfortably describe your food tastes and experiences in Korean.',
               completed: false,
               locked: false,
               lockReason: null,
               scenarioEmoji: '🍕',
               firstQuestionPreview: {
                 questionId: 100,
-                aiQuestion: 'What is your favorite food? Why do you like it?',
-                translatedQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아하나요?',
+                aiQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아해요?',
+                translatedQuestion: 'What is your favorite food? Why do you like it?',
               },
             },
             {
               scenarioId: 2,
               displayOrder: 2,
-              scenarioTitle: '주말 계획 말하기',
-              briefing: '다가오는 주말에 하고 싶은 일을 편하게 이야기합니다.',
-              conversationGoal: '계획과 이유를 영어로 이어서 말할 수 있다.',
+              scenarioTitle: 'Talk about your weekend plans',
+              briefing: 'Casually talk about what you want to do this coming weekend.',
+              conversationGoal: 'Walk through your plans and reasons in Korean.',
               completed: false,
               locked: false,
               lockReason: null,
               scenarioEmoji: '🗓️',
               firstQuestionPreview: {
                 questionId: 200,
-                aiQuestion: 'What are you planning to do this weekend?',
-                translatedQuestion: '이번 주말에 무엇을 할 계획인가요?',
+                aiQuestion: '이번 주말에 뭐 할 계획이에요?',
+                translatedQuestion: 'What are you planning to do this weekend?',
               },
             },
             {
               scenarioId: 3,
               displayOrder: 3,
-              scenarioTitle: '좋아하는 영화 소개하기',
-              briefing: '좋아하는 영화와 추천 이유를 이야기합니다.',
-              conversationGoal: '취향과 감상을 영어로 설명할 수 있다.',
+              scenarioTitle: 'Recommend your favorite movie',
+              briefing: 'Talk about a movie you love and why you would recommend it.',
+              conversationGoal: 'Explain your taste and impressions in Korean.',
               completed: false,
               locked: true,
               lockReason: 'PREVIOUS_SCENARIO_NOT_CLEARED',
@@ -86,8 +86,8 @@ export const startSessionHandler = http.post(
           currentTurn: {
             turnId: 101,
             sequence: 1,
-            aiQuestion: 'What is your favorite food? Why do you like it?',
-            translatedQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아하나요?',
+            aiQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아해요?',
+            translatedQuestion: 'What is your favorite food? Why do you like it?',
           },
           progress: {
             currentSequence: 1,
@@ -113,10 +113,10 @@ export const submitUtteranceHandler = http.post(
 
     // 종료 시에도 속마음은 non-null, nextTurn에 AI 마무리 멘트가 실려 옴
     const innerThought = completed
-      ? '마지막 답변도 분명하네. 자연스럽게 마무리하면 좋겠다.'
+      ? 'Your last answer was clear too. A natural wrap-up would be nice.'
       : sequence === 1
-      ? '매운 피자를 좋아한다고 바로 이유까지 말해주네. 대화하기 편하다.'
-      : '음, 직접 안 해먹는구나. 그럴 수도 있지.';
+      ? 'Oh, they like spicy pizza and gave the reason right away — easy to talk with.'
+      : 'Hmm, so they do not cook it themselves. Fair enough.';
     const innerThoughtType = completed ? 'GOOD' : sequence === 1 ? 'GOOD' : 'NORMAL';
 
     const response = HttpResponse.json({
@@ -133,18 +133,18 @@ export const submitUtteranceHandler = http.post(
           ? {
               turnId: 100 + nextSequence,
               sequence: nextSequence,
-              aiQuestion: 'Thanks for sharing. That was a great chat!',
-              translatedQuestion: '이야기해줘서 고마워. 정말 좋은 대화였어!',
+              aiQuestion: '이야기 들려줘서 고마워요. 정말 좋은 대화였어요!',
+              translatedQuestion: 'Thanks for sharing. That was a great chat!',
             }
           : {
               turnId: 100 + nextSequence,
               sequence: nextSequence,
               aiQuestion: sequence === 1
+                ? '보통 직접 요리해서 드세요?'
+                : '그 음식을 마지막으로 언제 먹었어요?',
+              translatedQuestion: sequence === 1
                 ? 'Do you usually cook it yourself?'
                 : 'When did you last eat it?',
-              translatedQuestion: sequence === 1
-                ? '그 음식을 보통 직접 요리하나요?'
-                : '그 음식을 마지막으로 언제 먹었나요?',
             },
         progress: {
           currentSequence: nextSequence,
@@ -169,34 +169,34 @@ export const feedbackHandler = http.post(
       data: {
         sessionId: Number(params.sessionId),
         nativeScore: 82,
-        highlightMessage: '하고 싶은 말을 끝까지 전달하는 힘이 좋았어요.',
+        highlightMessage: 'You pushed through and got your full point across.',
         turnFeedbacks: [
           {
             turnId: 101,
             sequence: 1,
-            originalQuestion: 'What is your favorite food? Why do you like it?',
-            translatedQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아하나요?',
-            userUtterance: 'I like pizza because it is spicy.',
+            originalQuestion: '가장 좋아하는 음식이 뭐예요? 왜 좋아해요?',
+            translatedQuestion: 'What is your favorite food? Why do you like it?',
+            userUtterance: '저는 피자 좋아해요. 매워서 좋아해요.',
             feedbackType: 'GOOD',
-            koreanAnalogy: '담백하게 이유를 붙인 말처럼 들려요.',
+            koreanAnalogy: 'It sounds like you cleanly tacked on the reason.',
             positiveFeedback: null,
-            feedbackDetail: '좋아하는 음식과 이유를 한 문장 안에서 분명하게 연결했기 때문이에요.',
+            feedbackDetail: 'Because you linked your favorite food and the reason in one clear sentence.',
             correctionExpression: null,
             correctionReason: null,
-            benchmarkMessage: '한국인의 30%가 이유를 빼먹는데 정확히 붙였어요.',
+            benchmarkMessage: 'Most beginners drop the reason — you added it perfectly.',
           },
           {
             turnId: 102,
             sequence: 2,
-            originalQuestion: 'Do you usually cook it yourself?',
-            translatedQuestion: '그 음식을 보통 직접 요리하나요?',
-            userUtterance: 'No cook. I buy outside.',
+            originalQuestion: '보통 직접 요리해서 드세요?',
+            translatedQuestion: 'Do you usually cook it yourself?',
+            userUtterance: '요리 안 해요. 밖에서 사요.',
             feedbackType: 'NEEDS_IMPROVEMENT',
-            koreanAnalogy: '뜻은 통하지만 단어만 이어 붙인 답처럼 들려요.',
-            positiveFeedback: '직접 요리하지 않는다는 의도는 분명하게 전달됐어요.',
+            koreanAnalogy: 'The meaning gets through, but it sounds like words strung together.',
+            positiveFeedback: 'Your intent — that you do not cook yourself — came through clearly.',
             feedbackDetail: null,
-            correctionExpression: 'No, I usually buy it from a restaurant.',
-            correctionReason: '동사를 넣어 완전한 문장으로 말하면 훨씬 자연스럽게 들려요.',
+            correctionExpression: '아니요, 보통 식당에서 사 먹어요.',
+            correctionReason: 'Adding the verb and saying it as a full sentence sounds much more natural.',
             benchmarkMessage: null,
           },
         ],

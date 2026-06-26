@@ -9,7 +9,7 @@ export function IntroStep({ nickname, onNext }: { nickname: string; onNext: () =
     <>
       <div className="flex flex-1 flex-col pt-7 space-y-5">
         <h1 className="text-[30px] font-black leading-[1.3] tracking-normal">
-          안녕하세요, {nickname}님{' '}
+          Hi, {nickname}!{' '}
           <motion.span
             className="tossface inline-block"
             animate={{ rotate: [0, 20, -10, 20, -5, 0] }}
@@ -18,17 +18,17 @@ export function IntroStep({ nickname, onNext }: { nickname: string; onNext: () =
             👋
           </motion.span>
           <br />
-          같이 편하게 이야기해봐요
+          Let&apos;s chat in Korean, no pressure
         </h1>
 
         <p className="text-[20px] font-bold leading-snug">
-          대화가 끝나면 외국인 귀에
+          After each chat, I&apos;ll tell you how
           <br />
-          어떻게 들렸는지 알려드릴게요
+          a native Korean speaker heard you
         </p>
       </div>
 
-      <Button onClick={onNext}>좋아요!</Button>
+      <Button onClick={onNext}>Sounds good!</Button>
     </>
   );
 }

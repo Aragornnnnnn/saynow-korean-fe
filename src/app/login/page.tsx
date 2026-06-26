@@ -8,11 +8,11 @@ import { useTypingLoop } from '@/hooks/useTypingLoop';
 import { generateRandomHex } from '@/lib/crypto';
 
 const HOOK_MESSAGES = [
-  '말했는데 돌아온 건 "Sorry?" 였어요',
-  '말은 했는데 외국인 표정이 이상했어요',
-  '눈치로 때웠는데 맞게 전달됐을까요?',
-  '아는 단어만 골라 말했는데 통했을까요?',
-  '영어로 말했는데 한번에 알아들었을까요?',
+  'You spoke, and all you got back was "Sorry?"',
+  'You said it, but they gave you a puzzled look',
+  'You winged it — did it actually land?',
+  'You stuck to the words you knew. Did it work?',
+  'You spoke Korean — did they get it the first time?',
 ];
 import { useBridgeEvent } from '@/bridge/useBridgeEvent';
 import { requestNativeLogin, triggerHaptic, updateNativeAuthSession, exitApp } from '@/bridge/commands';
@@ -90,7 +90,7 @@ function LoginPageContent() {
       await startWebSocialLogin(provider, nonce.current);
     } catch (err) {
       setPendingProvider(null);
-      setErrorMessage(err instanceof Error ? err.message : '로그인에 실패했습니다.');
+      setErrorMessage(err instanceof Error ? err.message : 'Login failed. Please try again.');
     }
   }
 
@@ -122,7 +122,7 @@ function LoginPageContent() {
       <div className="flex-1 flex flex-col items-center justify-center gap-6">
         <div className="text-center space-y-3">
           <h1 className="text-3xl font-bold text-foreground leading-snug">
-            외국인한테<br />내 영어가 통할지 알려드려요
+            Find out if your Korean<br />gets through to locals
           </h1>
           <p className="text-lg text-muted-foreground h-7">
             {typingText}<span className="animate-pulse">|</span>
@@ -135,8 +135,8 @@ function LoginPageContent() {
           onClick={() => startLogin('KAKAO')}
           disabled={isPending}
           pending={pendingProvider === 'KAKAO'}
-          pendingLabel="카카오 로그인 중..."
-          label="카카오로 로그인하기"
+          pendingLabel="Signing in with Kakao..."
+          label="Continue with Kakao"
           showBadge={lastProvider === 'KAKAO'}
           className="bg-[#FEE500] text-[#191919] shadow-sm"
           icon={<KakaoIcon />}
@@ -145,8 +145,8 @@ function LoginPageContent() {
           onClick={() => startLogin('GOOGLE')}
           disabled={isPending}
           pending={pendingProvider === 'GOOGLE'}
-          pendingLabel="구글 로그인 중..."
-          label="구글로 로그인하기"
+          pendingLabel="Signing in with Google..."
+          label="Continue with Google"
           showBadge={lastProvider === 'GOOGLE'}
           className="bg-white text-foreground shadow-sm ring-1 ring-border"
           icon={<GoogleIcon />}
@@ -185,7 +185,7 @@ function LoginButton({
       {showBadge && (
         <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10">
           <span className="relative block bg-primary text-white text-[11px] font-semibold px-3 py-1 rounded-full whitespace-nowrap after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-4 after:border-transparent after:border-t-primary">
-            최근 로그인
+            Last used
           </span>
         </div>
       )}

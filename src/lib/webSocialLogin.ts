@@ -54,7 +54,7 @@ export function clearPendingSocialLogin() {
 async function startKakaoSdkLogin(pending: PendingSocialLogin) {
   const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
   if (!kakaoJsKey) {
-    throw new Error('Kakao JS SDK 앱 키가 설정되지 않았습니다.');
+    throw new Error('The Kakao JS SDK app key is not configured.');
   }
 
   const Kakao = await loadKakaoSdk();
@@ -107,10 +107,10 @@ function createGoogleAuthorizationUrl(
   );
 
   if (!clientId) {
-    throw new Error('Google OAuth client ID가 설정되지 않았습니다.');
+    throw new Error('The Google OAuth client ID is not configured.');
   }
   if (!codeChallenge) {
-    throw new Error('Google OAuth code challenge를 생성하지 못했습니다.');
+    throw new Error('Failed to generate the Google OAuth code challenge.');
   }
 
   const params = new URLSearchParams({

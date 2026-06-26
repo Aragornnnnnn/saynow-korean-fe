@@ -44,9 +44,9 @@ export function SoundStep({
     <>
       <div className="flex flex-1 flex-col pt-7">
         <h1 className="text-[30px] font-black leading-[1.18] tracking-normal">
-          제가 이렇게 말을 걸게요
+          This is how I&apos;ll talk to you
           <br />
-          소리가 잘 들리나요?
+          Can you hear me clearly?
         </h1>
 
         <div className="flex flex-1 flex-col justify-center gap-6">
@@ -105,7 +105,7 @@ export function SoundStep({
       </div>
 
       <Button onClick={onNext}>
-        잘 들려요!
+        I can hear you!
       </Button>
     </>
   );

@@ -288,7 +288,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
     if (!SR) return;
 
     const recognition = new SR();
-    recognition.lang = 'en-US';
+    recognition.lang = 'ko-KR';
     recognition.continuous = false;
     recognition.interimResults = true;
 
@@ -374,7 +374,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
 
     const params = new URLSearchParams({
       model: 'nova-3',
-      language: 'en-US',
+      language: 'ko',
       smart_format: 'true',
       interim_results: 'true',
       endpointing: String(STT_ENDPOINTING_MS),
@@ -491,7 +491,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
         <div className='space-y-4 text-center'>
           <p className='text-muted-foreground'>{error}</p>
           <button onClick={() => router.push('/home')} className='text-sm font-medium text-primary'>
-            돌아가기
+            Go back
           </button>
         </div>
       </main>
@@ -586,7 +586,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
               transition={{ duration: 0.15 }}
               className='mb-2 text-center text-sm text-white/80 italic drop-shadow pointer-events-none'
             >
-              {transcript || '듣고 있어요...'}
+              {transcript || 'Listening...'}
             </motion.p>
           )}
         </AnimatePresence>
@@ -602,7 +602,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
               className='relative mb-2 flex justify-center'
             >
               <div className='rounded-2xl bg-[#F5F5F3] px-4 py-2.5 text-sm font-medium text-foreground shadow-sm whitespace-nowrap'>
-                목소리가 안 들렸어요, 다시 눌러서 말해주세요 🎤
+                We didn't catch that, tap to try again 🎤
               </div>
               <div className='absolute -bottom-2 left-1/2 -translate-x-1/2'
                 style={{ width: 0, height: 0, borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '8px solid #F5F5F3' }}
@@ -623,13 +623,13 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
               className='flex w-full items-center justify-center gap-2 h-14 rounded-2xl text-base font-bold text-white bg-primary shadow-[0_5px_0_#A85822] active:shadow-[0_2px_0_#A85822] active:translate-y-0.5 transition-transform duration-75'
             >
               {pageState === 'navigating' ? (
-                <><span className='h-5 w-5 rounded-full border-2 border-white/40 border-t-white animate-spin' /><span>이동 중...</span></>
-              ) : '결과 보기'}
+                <><span className='h-5 w-5 rounded-full border-2 border-white/40 border-t-white animate-spin' /><span>Loading...</span></>
+              ) : 'See results'}
             </motion.button>
           ) : pageState === 'submitting' ? (
             <motion.div key='submitting' className='flex h-14 items-center justify-center gap-2'>
               <span className='h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin' />
-              <span className='text-sm font-semibold text-white/70'>분석 중...</span>
+              <span className='text-sm font-semibold text-white/70'>Analyzing...</span>
             </motion.div>
           ) : isRecording ? (
             /* 녹음 중 — 파형 + 취소 */
@@ -666,7 +666,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
                 }}
                 className='text-sm font-semibold text-white/70 active:text-white transition-colors'
               >
-                취소
+                Cancel
               </button>
             </motion.div>
           ) : (
@@ -677,7 +677,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
                 <div className='flex gap-2'>
                   <input
                     className='flex-1 rounded-xl bg-white/90 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none'
-                    placeholder='텍스트로 입력 (debug)'
+                    placeholder='Type to send (debug)'
                     value={debugText}
                     onChange={(e) => setDebugText(e.target.value)}
                     onKeyDown={(e) => {
@@ -703,7 +703,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
               {/* ── END DEBUG ── */}
               <Button onClick={handleMicPress}>
                 <Mic size={20} className='text-white' />
-                <span className='text-sm font-semibold text-white'>말하기</span>
+                <span className='text-sm font-semibold text-white'>Speak</span>
               </Button>
             </motion.div>
           )}

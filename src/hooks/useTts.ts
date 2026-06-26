@@ -31,7 +31,7 @@ export function useTts() {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
+    utterance.lang = 'ko-KR';
     utterance.rate = 0.9;
     utterance.onstart = () => options?.onStart?.();
     utterance.onend = () => options?.onEnd?.();

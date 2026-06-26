@@ -15,7 +15,7 @@ export function OnboardingHeader({ step, onBack }: { step: OnboardingStep; onBac
       <button
         type="button"
         onClick={onBack}
-        aria-label="이전"
+        aria-label="Back"
         disabled={stepIndex === 0}
         className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--onboarding-fg)] transition-opacity active:bg-black/5 disabled:opacity-0"
       >

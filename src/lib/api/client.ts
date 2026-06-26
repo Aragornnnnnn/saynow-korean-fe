@@ -55,7 +55,7 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
     auth.clearAuth();
     window.location.href = '/login';
-    throw new Error('세션이 만료됐습니다. 다시 로그인해 주세요.');
+    throw new Error('Your session has expired. Please log in again.');
   }
 
   return readEnvelope<T>(response);
@@ -65,19 +65,19 @@ async function readEnvelope<T>(response: Response): Promise<T> {
   const text = await response.text();
   if (!text) {
     if (response.ok) return undefined as T;
-    throw new Error(`요청에 실패했습니다. (${response.status})`);
+    throw new Error(`The request failed. (${response.status})`);
   }
 
   let json: ApiEnvelope<T>;
   try {
     json = JSON.parse(text) as ApiEnvelope<T>;
   } catch {
-    throw new Error(`서버 응답을 읽지 못했습니다. (${response.status})`);
+    throw new Error(`Couldn't read the server response. (${response.status})`);
   }
 
   if (!json.success) {
     if (process.env.NODE_ENV === 'development') console.error('[API] error response:', json);
-    const err = new Error(json.error?.message ?? '서버 오류') as Error & { code?: string };
+    const err = new Error(json.error?.message ?? 'Server error') as Error & { code?: string };
     err.code = json.error?.code;
     throw err;
   }

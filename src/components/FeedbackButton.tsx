@@ -25,12 +25,12 @@ export function FeedbackButton() {
           setOpen(true);
         }}
         className="flex h-11 flex-col items-center justify-center gap-0.5 rounded-xl px-3 transition-all active:scale-90 active:bg-zinc-100"
-        aria-label="의견 보내기"
+        aria-label="Send feedback"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a8.38 8.38 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z" />
         </svg>
-        <span className="whitespace-nowrap text-[10px] font-medium" style={{ color: '#888' }}>의견 보내기</span>
+        <span className="whitespace-nowrap text-[10px] font-medium" style={{ color: '#888' }}>Feedback</span>
       </button>
 
       <BottomSheet open={open} onClose={() => setOpen(false)}>
@@ -67,8 +67,8 @@ function FeedbackSheetContent({ onDone }: { onDone: () => void }) {
     return (
       <div className="py-6 flex flex-col items-center gap-2">
         <span className="tossface text-4xl">🙏</span>
-        <p className="text-base font-bold text-zinc-800">소중한 의견 고마워요!</p>
-        <p className="text-sm text-zinc-500">한 글자도 빼놓지 않고 읽어볼게요</p>
+        <p className="text-base font-bold text-zinc-800">Thanks for sharing!</p>
+        <p className="text-sm text-zinc-500">We’ll read every single word</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ function FeedbackSheetContent({ onDone }: { onDone: () => void }) {
         <button onClick={onDone} className="absolute -top-1 right-0 text-xl leading-none text-muted-foreground">
           ✕
         </button>
-        <p className="pr-8 text-xl font-bold leading-snug text-foreground">Landit을 쓰면서 얼마나 만족하시나요?</p>
+        <p className="pr-8 text-xl font-bold leading-snug text-foreground">How happy are you with Landit?</p>
       </div>
 
       {/* 만족도 */}
@@ -126,19 +126,19 @@ function FeedbackSheetContent({ onDone }: { onDone: () => void }) {
       </div>
 
       {/* 의견 — 항상 노출 */}
-      <p className="mb-2 text-sm font-medium text-foreground">전하고 싶은 의견이 있다면?</p>
+      <p className="mb-2 text-sm font-medium text-foreground">Anything you’d like to tell us?</p>
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         maxLength={300}
         rows={3}
-        placeholder="대화 흐름, 발음, AI 피드백 등 자유롭게 적어주세요"
+        placeholder="Tell us anything — the conversation flow, pronunciation, AI feedback, and more"
         className="w-full resize-none rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
       />
-      <p className="mt-1.5 mb-5 text-xs text-muted-foreground">주신 의견은 한 글자도 빼놓지 않고 꼼꼼히 읽어볼게요.</p>
+      <p className="mt-1.5 mb-5 text-xs text-muted-foreground">We’ll read every word you send, carefully.</p>
 
       <Button size="md" onClick={handleSubmit} disabled={score === null}>
-        {score === null ? '얼마나 만족하는지 알려줘요' : '제출할게요'}
+        {score === null ? 'Let us know how you feel' : 'Submit'}
       </Button>
     </>
   );

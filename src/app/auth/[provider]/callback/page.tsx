@@ -42,7 +42,7 @@ function SocialCallbackContent({ provider }: { provider: string }) {
 
       try {
         if (!isSocialProvider(provider)) {
-          return redirectWithError('지원하지 않는 소셜 로그인 제공자입니다.');
+          return redirectWithError('This social login provider is not supported.');
         }
 
         const error = searchParams.get('error');
@@ -53,7 +53,7 @@ function SocialCallbackContent({ provider }: { provider: string }) {
             router.replace('/login');
             return;
           }
-          return redirectWithError('소셜 로그인이 취소되었습니다.');
+          return redirectWithError('Social login was canceled.');
         }
 
         const code = searchParams.get('code');
@@ -61,10 +61,10 @@ function SocialCallbackContent({ provider }: { provider: string }) {
         const pending = readPendingSocialLogin();
 
         if (!code || !state || !pending) {
-          return redirectWithError('로그인 요청 정보를 찾지 못했습니다. 다시 시도해주세요.');
+          return redirectWithError('We couldn’t find your login request. Please try again.');
         }
         if (pending.provider !== provider || pending.state !== state) {
-          return redirectWithError('로그인 요청 검증 값이 일치하지 않습니다.');
+          return redirectWithError('Login request verification didn’t match.');
         }
 
         const tokenResponse = await fetch('/auth/oauth-token', {
@@ -80,7 +80,7 @@ function SocialCallbackContent({ provider }: { provider: string }) {
         const tokenJson = (await tokenResponse.json()) as { idToken?: string; error?: string };
 
         if (!tokenResponse.ok || !tokenJson.idToken) {
-          return redirectWithError(tokenJson.error ?? '소셜 로그인 토큰 교환에 실패했습니다.');
+          return redirectWithError(tokenJson.error ?? 'Social login token exchange failed.');
         }
 
         const data = await socialLogin(provider, tokenJson.idToken, pending.nonce);
@@ -93,7 +93,7 @@ function SocialCallbackContent({ provider }: { provider: string }) {
         router.replace(shouldShowOnboarding(data.user) ? '/onboarding' : '/home');
       } catch (error) {
         if (!cancelled) {
-          const message = error instanceof Error ? error.message : '로그인에 실패했습니다.';
+          const message = error instanceof Error ? error.message : 'Login failed. Please try again.';
           clearPendingSocialLogin();
           router.replace(`/login?error=${encodeURIComponent(message)}`);
         }

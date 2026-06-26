@@ -6,7 +6,7 @@ export default function PublicPrivacyPage() {
     <LegalDocumentPage
       document={privacyDocument}
       backHref="/"
-      backLabel="Landit 홈으로 돌아가기"
+      backLabel="Back to Landit home"
     />
   );
 }

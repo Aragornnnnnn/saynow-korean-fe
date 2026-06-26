@@ -27,15 +27,15 @@ export function ScenarioStep({
     <>
       <div className="flex flex-1 flex-col pt-7 gap-6">
         <h1 className="text-[30px] font-black leading-[1.18] tracking-normal">
-          준비는 끝났어요
+          You&apos;re all set
           <br />
-          첫 번째 대화가 기다리고 있어요
+          Your first conversation is waiting
         </h1>
 
         {isPending ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-[var(--onboarding-muted)]">
             <LoaderCircle className="animate-spin" size={28} />
-            <p className="text-sm font-semibold">시나리오를 불러오는 중이에요.</p>
+            <p className="text-sm font-semibold">Loading your scenario...</p>
           </div>
         ) : errorMessage ? (
           <div
@@ -44,7 +44,7 @@ export function ScenarioStep({
           >
             <p className="text-sm font-semibold leading-relaxed text-[var(--onboarding-muted)]">{errorMessage}</p>
             <button type="button" onClick={onRetry} className="text-sm font-bold text-primary">
-              다시 시도
+              Try again
             </button>
           </div>
         ) : (
@@ -76,7 +76,7 @@ export function ScenarioStep({
       </div>
 
       <Button onClick={onStart} disabled={!scenario || isPending || !!errorMessage || !isUnlocked}>
-        시작할게요!
+        Let&apos;s start!
       </Button>
     </>
   );

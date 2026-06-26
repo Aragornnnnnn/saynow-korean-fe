@@ -85,7 +85,7 @@ function EngineCard({ label, result, interim, wer, isRecording, error, ready }: 
         {displayText
           ? displayText
           : <span className="text-zinc-300">
-              {error ? '연결 실패' : isRecording ? '듣고 있어요...' : ready ? '—' : '분석 중...'}
+              {error ? 'Connection failed' : isRecording ? 'Listening...' : ready ? '—' : 'Analyzing...'}
             </span>
         }
       </p>
@@ -95,10 +95,10 @@ function EngineCard({ label, result, interim, wer, isRecording, error, ready }: 
       {ready && result.text && (
         <div className="mt-3 pt-3 border-t border-zinc-100 flex flex-wrap gap-1.5">
           <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-            {result.wordCount}단어
+            {result.wordCount} words
           </span>
           <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${result.punctCount > 0 ? 'bg-zinc-100 text-zinc-600' : 'bg-zinc-100 text-zinc-400'}`}>
-            구두점 {result.punctCount}개
+            {result.punctCount} punctuation
           </span>
           {wer !== null && <WerChip wer={wer} />}
         </div>
@@ -189,7 +189,7 @@ export default function SttTestPage() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      alert('마이크 권한이 필요해요.');
+      alert('We need microphone access.');
       recordingRef.current = false;
       return;
     }
@@ -199,7 +199,7 @@ export default function SttTestPage() {
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     if (SR) {
       const rec: SpeechRecognition = new SR();
-      rec.lang = 'en-US';
+      rec.lang = 'ko-KR';
       rec.continuous = true;
       rec.interimResults = true;
       webStartRef.current = Date.now();
@@ -241,7 +241,7 @@ export default function SttTestPage() {
 
       const params = new URLSearchParams({
         model: 'nova-3',
-        language: 'en-US',
+        language: 'ko',
         smart_format: 'true',
         interim_results: 'true',
         endpointing: '400',
@@ -285,17 +285,17 @@ export default function SttTestPage() {
       };
 
       ws.onerror = () => {
-        setDgError('WebSocket 연결 실패');
+        setDgError('WebSocket connection failed');
         finishDg('');
       };
       ws.onclose = (e) => {
         if (e.code !== 1000 && e.code !== 1001) {
-          setDgError(`연결 끊김 (${e.code})`);
+          setDgError(`Connection dropped (${e.code})`);
           finishDg(dgFinalRef.current);
         }
       };
     } catch {
-      setDgError('Deepgram 연결 실패');
+      setDgError('Deepgram connection failed');
       finishDg('');
     }
 
@@ -321,24 +321,24 @@ export default function SttTestPage() {
         >
           <ChevronLeft size={22} strokeWidth={2} />
         </button>
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-[17px] font-semibold text-zinc-900">실험실</h1>
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-[17px] font-semibold text-zinc-900">Lab</h1>
       </header>
 
       <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-10">
 
         <div className="pt-4 pb-5">
-          <p className="text-[22px] font-bold text-zinc-900">STT 엔진 비교</p>
-          <p className="mt-1 text-sm text-zinc-500">말을 멈추면 자동으로 두 결과가 동시에 나타나요.</p>
+          <p className="text-[22px] font-bold text-zinc-900">STT engine comparison</p>
+          <p className="mt-1 text-sm text-zinc-500">Stop speaking and both results appear at once.</p>
         </div>
 
         {/* 정답 문장 */}
         <div className="mb-5">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">정답 문장 (선택)</p>
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Reference sentence (optional)</p>
           <input
             className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-700 outline-none focus:border-zinc-400"
             value={refText}
             onChange={(e) => setRefText(e.target.value)}
-            placeholder="직접 입력 — 비워두면 자유 발화"
+            placeholder="Type here — leave blank for free speech"
           />
         </div>
 
@@ -350,15 +350,15 @@ export default function SttTestPage() {
           }`}
         >
           {isRecording
-            ? <><MicOff size={20} /><span>멈추기</span></>
-            : <><Mic size={20} /><span>동시 녹음 시작</span></>
+            ? <><MicOff size={20} /><span>Stop</span></>
+            : <><Mic size={20} /><span>Start recording both</span></>
           }
         </button>
 
         {isRecording && (
           <div className="rounded-2xl bg-zinc-100 px-4 py-3 flex items-center gap-3 mb-5">
             <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse shrink-0" />
-            <p className="text-sm text-zinc-600">직접 멈추거나, 1초 정도 말이 없으면 자동으로 분석해요</p>
+            <p className="text-sm text-zinc-600">Stop manually, or pause for about a second to analyze automatically</p>
           </div>
         )}
 

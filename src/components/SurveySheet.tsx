@@ -42,8 +42,8 @@ export function SurveySheet({ sessionId, onDone }: SurveySheetProps) {
       {/* 헤더 */}
       <div className='mb-5 flex items-start justify-between'>
         <div>
-          <p className='text-base font-bold text-foreground'>방금 연습 어떠셨어요?</p>
-          <p className='mt-0.5 text-xs text-muted-foreground'>솔직하게 말해줘요, 다 듣고 반영할게요</p>
+          <p className='text-base font-bold text-foreground'>How was that practice?</p>
+          <p className='mt-0.5 text-xs text-muted-foreground'>Be honest — we’re listening and we’ll act on it</p>
         </div>
         <button onClick={handleDone} className='text-xl leading-none text-muted-foreground'>
           ✕
@@ -104,13 +104,13 @@ export function SurveySheet({ sessionId, onDone }: SurveySheetProps) {
             className='overflow-hidden'
           >
             <div className='mb-5'>
-              <p className='mb-2 text-sm font-medium text-foreground'>어떤 점이 아쉬우셨나요?</p>
+              <p className='mb-2 text-sm font-medium text-foreground'>What fell short for you?</p>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 maxLength={300}
                 rows={3}
-                placeholder='대화 흐름, 발음, AI 피드백 등 자유롭게 적어주세요'
+                placeholder='Tell us anything — the conversation flow, pronunciation, AI feedback, and more'
                 className='w-full resize-none rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary'
                 autoFocus
               />
@@ -121,7 +121,7 @@ export function SurveySheet({ sessionId, onDone }: SurveySheetProps) {
       </AnimatePresence>
 
       {/* 완료 버튼 */}
-      <Button size="md" onClick={handleDone}>완료</Button>
+      <Button size="md" onClick={handleDone}>Done</Button>
     </>
   );
 

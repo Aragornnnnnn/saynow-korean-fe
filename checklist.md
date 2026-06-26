@@ -2,14 +2,14 @@
 
 외국인 대상 **한국어 회화 학습** 서비스. `saynow-fe/apps/web`(영어 회화 연습)을 가져와 전환 후 배포해 마케팅 지표 수집.
 
-## Phase A — 웹 코드 복사 & 빌드
-- [ ] `apps/web` 소스를 새 레포 루트로 복사 (node_modules / .next / 시크릿 env 제외)
-- [ ] `.gitignore`를 web 버전으로 교체 (`.env*` 보호)
-- [ ] `npm install`
-- [ ] `.env.local` 생성 (한국어 백엔드 URL로)
-- [ ] `npm run build` 통과 확인
-- [ ] `npm run dev` 로컬 구동 확인
-- [ ] 초기 커밋
+## Phase A — 웹 코드 복사 & 빌드 ✅
+- [x] `apps/web` 소스를 새 레포 루트로 복사 (node_modules / .next / 시크릿 env 제외)
+- [x] `.gitignore`를 web 버전으로 교체 (`.env*` 보호)
+- [x] `npm install` (682 패키지)
+- [x] `.env.local` 생성 (현재 localhost 플레이스홀더 — Phase B에서 실제 URL로)
+- [x] `npm run build` 통과 확인
+- [ ] `npm run dev` 로컬 구동 확인 (백엔드 URL 받은 뒤)
+- [x] 초기 커밋 (646dfed)
 
 ## Phase B — 한국어 학습으로 전환
 - [ ] `NEXT_PUBLIC_API_BASE_URL` → 한국어용 백엔드로 교체 (URL 확인 필요)

@@ -42,11 +42,11 @@ export function LegalDocumentPage({ document, backHref, backLabel }: LegalDocume
           {/* 메타 정보 */}
           <div className="mt-4 mb-6 overflow-hidden rounded-xl" style={{ background: '#fff' }}>
             <div className="flex items-center justify-between px-4 py-3.5 border-b" style={{ borderColor: '#F2F2F7' }}>
-              <span className="text-[14px]" style={{ color: '#888' }}>시행일</span>
+              <span className="text-[14px]" style={{ color: '#888' }}>Effective date</span>
               <span className="text-[14px] font-medium" style={{ color: '#111' }}>{document.effectiveDate}</span>
             </div>
             <div className="flex items-center justify-between px-4 py-3.5">
-              <span className="text-[14px]" style={{ color: '#888' }}>문서 버전</span>
+              <span className="text-[14px]" style={{ color: '#888' }}>Document version</span>
               <span className="text-[14px] font-medium" style={{ color: '#111' }}>{document.version}</span>
             </div>
           </div>

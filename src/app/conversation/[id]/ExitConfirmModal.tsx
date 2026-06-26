@@ -18,13 +18,13 @@ export default function ExitConfirmModal({ onConfirm, onCancel }: ExitConfirmMod
         className="mx-6 w-full max-w-sm rounded-2xl bg-card px-6 py-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-base font-bold text-foreground mb-2">대화를 종료할까요?</h2>
+        <h2 className="text-base font-bold text-foreground mb-2">End this conversation?</h2>
         <p className="text-sm text-muted-foreground mb-6 whitespace-nowrap">
-          지금 나가면 진행 중인 대화가 저장되지 않아요.
+          If you leave now, your progress won't be saved.
         </p>
         <div className="flex gap-3">
-          <Button variant="ghost" size="md" onClick={onConfirm}>나가기</Button>
-          <Button size="md" onClick={onCancel}>계속하기</Button>
+          <Button variant="ghost" size="md" onClick={onConfirm}>Leave</Button>
+          <Button size="md" onClick={onCancel}>Keep going</Button>
         </div>
       </div>
     </div>

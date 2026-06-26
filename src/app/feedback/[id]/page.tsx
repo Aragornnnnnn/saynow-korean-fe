@@ -33,7 +33,7 @@ export default function FeedbackPage({ params }: { params: Promise<{ id: string 
         <main className='flex h-full items-center justify-center bg-background px-6'>
           <div className='space-y-4 text-center'>
             <p className='text-muted-foreground'>{error.message}</p>
-            <button onClick={() => router.replace('/home?unlocked=true')} className='text-sm font-medium text-primary'>돌아가기</button>
+            <button onClick={() => router.replace('/home?unlocked=true')} className='text-sm font-medium text-primary'>Go back</button>
           </div>
         </main>
       );
@@ -45,8 +45,8 @@ export default function FeedbackPage({ params }: { params: Promise<{ id: string 
     return (
       <main className='flex h-full items-center justify-center bg-background px-6'>
         <div className='space-y-4 text-center'>
-          <p className='text-muted-foreground'>{error?.message ?? '피드백을 불러올 수 없어요.'}</p>
-          <button onClick={() => router.replace('/home?unlocked=true')} className='text-sm font-medium text-primary'>돌아가기</button>
+          <p className='text-muted-foreground'>{error?.message ?? "Couldn't load feedback."}</p>
+          <button onClick={() => router.replace('/home?unlocked=true')} className='text-sm font-medium text-primary'>Go back</button>
         </div>
       </main>
     );
@@ -195,7 +195,7 @@ function TurnDetailView({
           >
             <ChevronLeft size={22} strokeWidth={2} />
           </button>
-          <p className='flex-1 text-center text-lg font-bold text-zinc-800 pr-7'>상세 분석</p>
+          <p className='flex-1 text-center text-lg font-bold text-zinc-800 pr-7'>Details</p>
         </div>
         <div className='px-4 pb-4 flex gap-1.5'>
           {turns.map((_, i) => (
@@ -238,7 +238,7 @@ function TurnDetailView({
         className='px-5 pt-3 shrink-0 border-t border-zinc-100'
         style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
       >
-        <Button onClick={goNext}>{isLast ? '다음 대화할게요' : '다음'}</Button>
+        <Button onClick={goNext}>{isLast ? 'Next conversation' : 'Next'}</Button>
       </div>
     </div>
   );
@@ -267,15 +267,15 @@ function useCountUp(target: number, delay: number, duration: number) {
 }
 
 function getScoreInterpretation(score: number): string {
-  if (score >= 95) return '어색한 표현 하나 없이, 원어민이 완벽히 이해했어요.';
-  if (score >= 90) return '원어민과 프리토킹이 가능해요.';
-  if (score >= 80) return '원어민이 되묻지 않고 한 번에 알아들었어요. 사소한 실수 정도는 인간미라 괜찮아요.';
-  if (score >= 70) return '살짝 어색한 표현이 있어도, 원어민이 내 의도를 알아듣는 데엔 문제 없어요.';
-  if (score >= 60) return '유창하진 않아도 괜찮아요. 하고 싶은 말은 다 전달됐어요.';
-  if (score >= 50) return '원어민이 아리송해하면서도 어느 정도 알아들었어요. 조금만 다듬으면 또렷하게 전달돼요.';
-  if (score >= 40) return '센스 있는 원어민은 핵심을 알아차렸지만, 무심한 상대였다면 놓쳤을 거예요.';
-  if (score >= 30) return '원어민이 무슨 말인지 감 정도만 잡았어요.';
-  return '몸짓까지 썼다면 통했겠지만, 말만으로는 아직 어려웠어요.';
+  if (score >= 95) return 'Flawless — a native speaker understood you perfectly.';
+  if (score >= 90) return 'You can free-talk with natives, no problem.';
+  if (score >= 80) return 'A native got it in one go. A few minor slips are totally fine.';
+  if (score >= 70) return 'A little awkward here and there, but your intent comes across clearly.';
+  if (score >= 60) return 'Not fluent yet, but everything you wanted to say got through.';
+  if (score >= 50) return 'A native half-got it. A little polish and it’ll be crystal clear.';
+  if (score >= 40) return 'A sharp native caught your point, but a distracted one would’ve missed it.';
+  if (score >= 30) return 'A native only got the gist of what you meant.';
+  return 'A few gestures would’ve helped — words alone weren’t quite enough.';
 }
 
 // RunnerTrack과 동일: delay 400ms, duration 1800ms
@@ -316,7 +316,7 @@ function SummaryPage({
         >
           <ChevronLeft size={22} strokeWidth={2} className='text-zinc-400' />
         </button>
-        <p className='flex-1 text-center text-lg font-bold text-zinc-800 pr-7'>{scenarioTitle ?? '피드백'}</p>
+        <p className='flex-1 text-center text-lg font-bold text-zinc-800 pr-7'>{scenarioTitle ?? 'Feedback'}</p>
       </div>
 
       {/* 나가기 확인 모달 */}
@@ -338,15 +338,15 @@ function SummaryPage({
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
               style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
             >
-              <p className='text-lg font-bold text-zinc-800 mb-1'>상세 분석을 보지 않고 나갈까요?</p>
-              <p className='text-sm text-zinc-500 mb-6'>지금 안 보면 같은 실수를 또 해요.</p>
+              <p className='text-lg font-bold text-zinc-800 mb-1'>Leave without seeing the details?</p>
+              <p className='text-sm text-zinc-500 mb-6'>Skip it now and you’ll repeat the same mistakes.</p>
               <div className='flex flex-col gap-2'>
-                <Button onClick={() => setShowExitModal(false)}>계속 볼게요</Button>
+                <Button onClick={() => setShowExitModal(false)}>Keep reading</Button>
                 <button
                   onClick={() => { track(EVENTS.FEEDBACK_EXITED_EARLY, { scenario_id: scenarioId, session_id: sessionId }); router.replace('/home?unlocked=true'); }}
                   className='w-full py-3 text-sm font-semibold text-zinc-400'
                 >
-                  그냥 나갈게요
+                  Leave anyway
                 </button>
               </div>
             </motion.div>
@@ -361,14 +361,14 @@ function SummaryPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <p className='text-base text-zinc-500 mb-1'>한국인 평균보다</p>
+          <p className='text-base text-zinc-500 mb-1'>You sounded</p>
           <p className='text-4xl font-black tracking-tight leading-tight'>
             {/* 카운트업 중 자릿수 변화로 뒤 문구가 밀리지 않게 최종 값만큼 너비 고정 */}
             <span className='relative inline-block tabular-nums text-[#E07A3A]'>
               <span className='invisible' aria-hidden>{score}%</span>
               <span className='absolute inset-0 text-right'>{displayScore}%</span>
             </span>
-            <span className='text-zinc-800'> 더 잘 전달했어요</span>
+            <span className='text-zinc-800'> like a native speaker</span>
           </p>
         </motion.div>
 
@@ -382,22 +382,22 @@ function SummaryPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: trackEndSec - 0.6 }}
         >
-          <p className='text-xl font-bold text-zinc-800 mb-3'>이번 대화에서</p>
+          <p className='text-xl font-bold text-zinc-800 mb-3'>In this conversation</p>
           <div className='rounded-2xl bg-[#FFF4EC] divide-y divide-[#F0D9C8]'>
 
             {/* 전달력 */}
             <div className='px-5 py-4'>
-              <p className='text-xs font-semibold text-zinc-500 mb-1'>전달력</p>
+              <p className='text-xs font-semibold text-zinc-500 mb-1'>Clarity</p>
               <p className='text-base font-semibold text-zinc-800 leading-snug'>{interpretation}</p>
             </div>
 
             {/* 대화 성공률 */}
             <div className='px-5 py-4'>
-              <p className='text-xs font-semibold text-zinc-500 mb-1'>대화 성공률</p>
+              <p className='text-xs font-semibold text-zinc-500 mb-1'>Success rate</p>
               <p className='text-base font-semibold text-zinc-800 leading-snug'>
                 {goodTurns > 0
-                  ? <>{totalTurns}번 중 <span className='text-[#E07A3A]'>{goodTurns}번</span> 원어민처럼 말했어요</>
-                  : `${totalTurns}번 모두 끝까지 말했어요.`
+                  ? <>You sounded native <span className='text-[#E07A3A]'>{goodTurns}</span> of {totalTurns} times</>
+                  : `You finished all ${totalTurns} turns.`
                 }
               </p>
             </div>
@@ -405,7 +405,7 @@ function SummaryPage({
             {/* 발견한 강점 */}
             {highlightMessage && (
               <div className='px-5 py-4'>
-                <p className='text-xs font-semibold text-zinc-500 mb-1'>발견한 강점</p>
+                <p className='text-xs font-semibold text-zinc-500 mb-1'>Your strength</p>
                 <p className='text-base font-semibold text-zinc-800 leading-snug'>{highlightMessage}</p>
               </div>
             )}
@@ -421,8 +421,8 @@ function SummaryPage({
           >
             <Button onClick={onNext}>
               {(totalTurns - goodTurns) > 0
-                ? `원어민까지 ${totalTurns - goodTurns}걸음, 고쳐볼게요`
-                : '뭐가 잘 통했는지 볼게요'}
+                ? `Fix ${totalTurns - goodTurns} step${(totalTurns - goodTurns) > 1 ? 's' : ''} to native`
+                : 'See what worked'}
             </Button>
           </motion.div>
         </div>
@@ -481,8 +481,8 @@ function RunnerTrack({ targetPos }: { targetPos: number }) {
 
       {/* 양끝 라벨 */}
       <div className='flex justify-between mt-2.5'>
-        <p className='text-base font-semibold text-zinc-700'><span className='tossface'>🇰🇷</span> 아직은 한국인</p>
-        <p className='text-base font-semibold text-zinc-700'>사실상 원어민 <span className='tossface'>🌍</span></p>
+        <p className='text-base font-semibold text-zinc-700'><span className='tossface'>🌱</span> Beginner</p>
+        <p className='text-base font-semibold text-zinc-700'>Native speaker <span className='tossface'>🇰🇷</span></p>
       </div>
     </div>
   );
@@ -516,20 +516,20 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
       <FadeIn delay={0}>
         <p className='text-2xl font-black leading-tight text-zinc-800'>
           <span className='tossface'>{isGood ? '✅' : '💪'}</span>{' '}
-          {isGood ? '잘 통했어요' : '한 단계 더 업그레이드해봐요'}
+          {isGood ? 'It got through' : 'Let’s level this up one notch'}
         </p>
       </FadeIn>
 
       {/* 채팅 UI */}
       <FadeIn delay={0.1}>
         <div>
-          <p className='text-xs font-semibold text-zinc-500 mb-1.5 px-1'>질문</p>
+          <p className='text-xs font-semibold text-zinc-500 mb-1.5 px-1'>Question</p>
           <AiBubble text={turn.originalQuestion} translatedText={turn.translatedQuestion} />
         </div>
       </FadeIn>
       <FadeIn delay={0.2}>
         <div>
-          <p className='text-xs font-semibold text-zinc-500 mb-1.5 px-1 text-right'>내 답변</p>
+          <p className='text-xs font-semibold text-zinc-500 mb-1.5 px-1 text-right'>Your answer</p>
           <UserBubble text={turn.userUtterance} />
         </div>
       </FadeIn>
@@ -542,7 +542,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.koreanAnalogy && (
             <FadeIn delay={0.18}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-zinc-800'>한국어로 치면</p>
+                <p className='text-sm font-bold text-zinc-800'>In plain English</p>
                 <div className='rounded-2xl border border-zinc-200 px-4 py-4'>
                   <p className='text-base text-zinc-600 leading-relaxed'>{turn.koreanAnalogy}</p>
                 </div>
@@ -553,7 +553,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.feedbackDetail && (
             <FadeIn delay={0.3}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-zinc-800'>잘한 이유</p>
+                <p className='text-sm font-bold text-zinc-800'>Why it worked</p>
                 <div className='rounded-2xl border border-zinc-200 px-4 py-4'>
                   <p className='text-base text-zinc-700 leading-relaxed'>{turn.feedbackDetail}</p>
                 </div>
@@ -564,7 +564,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.benchmarkMessage && (
             <FadeIn delay={0.42}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-[#3B82F6]'>이 디테일이 통했어요</p>
+                <p className='text-sm font-bold text-[#3B82F6]'>This detail landed</p>
                 <div className='rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] px-4 py-4'>
                   <p className='text-base font-semibold text-zinc-800 leading-relaxed'>{turn.benchmarkMessage}</p>
                 </div>
@@ -577,7 +577,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.koreanAnalogy && (
             <FadeIn delay={0.18}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-zinc-800'>한국어로 치면</p>
+                <p className='text-sm font-bold text-zinc-800'>In plain English</p>
                 <div className='rounded-2xl border border-zinc-200 px-4 py-4'>
                   <p className='text-base text-zinc-600 leading-relaxed'>{turn.koreanAnalogy}</p>
                 </div>
@@ -588,7 +588,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.correctionExpression && (
             <FadeIn delay={0.3}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-zinc-800'>이렇게 하면 더 통해요</p>
+                <p className='text-sm font-bold text-zinc-800'>Say it like this</p>
                 <div className='rounded-2xl border border-zinc-200 px-4 py-4 space-y-3'>
                   <div className='flex items-center gap-2 flex-wrap'>
                     <p className='text-base font-semibold text-zinc-600 line-through decoration-zinc-600'>{turn.userUtterance}</p>
@@ -606,7 +606,7 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
           {turn.positiveFeedback && (
             <FadeIn delay={0.42}>
               <div className='space-y-2'>
-                <p className='text-sm font-bold text-[#16A34A]'>이 부분은 좋았어요</p>
+                <p className='text-sm font-bold text-[#16A34A]'>This part was good</p>
                 <div className='rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] px-4 py-4'>
                   <p className='text-base font-semibold text-zinc-800 leading-relaxed'>{turn.positiveFeedback}</p>
                 </div>

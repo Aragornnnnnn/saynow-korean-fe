@@ -9,14 +9,14 @@ import { MSWProvider } from "@/mocks/MSWProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Landit — 외국인과의 영어 회화 연습",
-  description: "실제 외국인 상황을 시뮬레이션하며 영어 회화를 연습하고, AI가 외국인 관점의 이해도 피드백을 드려요.",
-  keywords: ["영어 회화", "영어 연습", "AI 영어", "영어 스피킹", "Landit"],
+  title: "Landit — Practice real Korean conversation",
+  description: "Practice speaking Korean in real-life situations and get AI feedback on how a native speaker would understand you.",
+  keywords: ["learn Korean", "Korean conversation", "speak Korean", "Korean practice", "AI Korean tutor", "Landit"],
   openGraph: {
-    title: "Landit — 외국인과의 영어 회화 연습",
-    description: "실제 외국인 상황을 시뮬레이션하며 영어 회화를 연습하고, AI가 외국인 관점의 이해도 피드백을 드려요.",
+    title: "Landit — Practice real Korean conversation",
+    description: "Practice speaking Korean in real-life situations and get AI feedback on how a native speaker would understand you.",
     siteName: "Landit",
-    locale: "ko_KR",
+    locale: "en_US",
     type: "website",
   },
   icons: {
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased">
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
