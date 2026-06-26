@@ -12,13 +12,16 @@
 - [x] 초기 커밋 (646dfed)
 
 ## Phase B — 한국어 학습으로 전환
-- [ ] `NEXT_PUBLIC_API_BASE_URL` → 한국어용 백엔드로 교체 (URL 확인 필요)
+- [x] UI 카피 영어화 (외국인 학습자 대상) — 홈/온보딩/대화/피드백/마이/로그인/공용
+- [x] 피드백 프레이밍 플립 (원어민=한국어 기준)
+- [x] STT/TTS 언어 ko-KR / Deepgram ko 전환
+- [x] mock 데이터 한국어 회화로 플립 (handlers.ts)
+- [x] 메타데이터/OG/lang 한국어 학습용으로 (브랜드명 Landit 유지)
+- [ ] `NEXT_PUBLIC_API_BASE_URL` → 한국어용 백엔드로 교체 (URL 대기 중)
 - [ ] **Amplitude 신규 프로젝트 키** 적용 (원본 지표와 분리 — 마케팅 지표 핵심)
 - [ ] OAuth(Google/Kakao) 신규 앱/redirect URI 재설정
-- [ ] UI 카피 영어화 (외국인 학습자 대상)
-- [ ] 시나리오/콘텐츠 한국어 회화로 전환 (`docs/scenarios.json` 참고)
-- [ ] 브랜딩(서비스명/로고/메타태그) 교체
-- [ ] 약관/개인정보 페이지 갱신
+- [ ] 약관/개인정보 본문(legalDocuments.ts) 영어화 — 법무 검토 필요, 보류
+- [ ] (잔여) stt/token 라우트 에러 문구, analytics/events.ts 점검
 
 ## Phase C — 배포 & 지표
 - [ ] Vercel 배포 (또는 사용자 지정 호스팅)
