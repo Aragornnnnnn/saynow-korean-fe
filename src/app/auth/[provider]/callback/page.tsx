@@ -119,5 +119,5 @@ function CallbackLoading() {
 }
 
 function isSocialProvider(provider: string): provider is SocialProvider {
-  return provider === 'GOOGLE' || provider === 'KAKAO';
+  return provider === 'GOOGLE';
 }

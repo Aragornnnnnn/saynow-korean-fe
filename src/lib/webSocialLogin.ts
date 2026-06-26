@@ -28,11 +28,6 @@ export async function startWebSocialLogin(provider: SocialProvider, nonce: strin
   };
   sessionStorage.setItem(SOCIAL_LOGIN_STORAGE_KEY, JSON.stringify(pending));
 
-  if (provider === 'KAKAO') {
-    await startKakaoSdkLogin(pending);
-    return;
-  }
-
   window.location.assign(createGoogleAuthorizationUrl(pending, codeChallenge));
 }
 
@@ -49,52 +44,6 @@ export function readPendingSocialLogin(): PendingSocialLogin | null {
 
 export function clearPendingSocialLogin() {
   sessionStorage.removeItem(SOCIAL_LOGIN_STORAGE_KEY);
-}
-
-async function startKakaoSdkLogin(pending: PendingSocialLogin) {
-  const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
-  if (!kakaoJsKey) {
-    throw new Error('The Kakao JS SDK app key is not configured.');
-  }
-
-  const Kakao = await loadKakaoSdk();
-  if (!Kakao.isInitialized()) {
-    Kakao.init(kakaoJsKey);
-  }
-  Kakao.Auth.authorize({
-    redirectUri: pending.redirectUri,
-    state: pending.state,
-    nonce: pending.nonce,
-    scope: 'openid,profile_nickname',
-  });
-}
-
-function loadKakaoSdk(): Promise<KakaoSdk> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const win = window as any;
-  if (win.Kakao) return Promise.resolve(win.Kakao as KakaoSdk);
-
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
-    script.crossOrigin = 'anonymous';
-    script.onload = () => resolve(win.Kakao as KakaoSdk);
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-interface KakaoSdk {
-  isInitialized(): boolean;
-  init(key: string): void;
-  Auth: {
-    authorize(options: {
-      redirectUri: string;
-      state?: string;
-      nonce?: string;
-      scope?: string;
-    }): void;
-  };
 }
 
 function createGoogleAuthorizationUrl(
@@ -129,10 +78,7 @@ function createGoogleAuthorizationUrl(
 }
 
 function getRedirectUri(provider: SocialProvider) {
-  const configured =
-    provider === 'GOOGLE'
-      ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
-      : process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
+  const configured = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
   const currentOriginRedirectUri = `${window.location.origin}/auth/${provider.toLowerCase()}/callback`;
 
   if (!configured) return currentOriginRedirectUri;

@@ -277,7 +277,6 @@ function MenuButton({
 function getProviderLabel(provider?: string) {
   switch (provider) {
     case 'GOOGLE': return 'Google';
-    case 'KAKAO': return 'Kakao';
     default: return '-';
   }
 }

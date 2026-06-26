@@ -62,7 +62,7 @@ function LoginPageContent() {
 
   useEffect(() => {
     const saved = localStorage.getItem(LAST_LOGIN_KEY) as SocialProvider | null;
-    if (saved === 'KAKAO' || saved === 'GOOGLE') setLastProvider(saved);
+    if (saved === 'GOOGLE') setLastProvider(saved);
 
     function resetCancelledLogin() {
       nonce.current = '';

@@ -16,7 +16,6 @@ type OAuthTokenResponse = {
 };
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
-const KAKAO_TOKEN_URL = 'https://kauth.kakao.com/oauth/token';
 
 export async function POST(request: Request) {
   const body = (await request.json()) as Partial<OAuthTokenRequest>;
@@ -37,10 +36,7 @@ export async function POST(request: Request) {
 }
 
 async function exchangeCodeForIdToken(body: OAuthTokenRequest) {
-  const tokenResponse =
-    body.provider === 'GOOGLE'
-      ? await exchangeGoogleCode(body)
-      : await exchangeKakaoCode(body);
+  const tokenResponse = await exchangeGoogleCode(body);
 
   const idToken = tokenResponse.id_token ?? tokenResponse.idToken;
   if (!idToken) {
@@ -76,27 +72,6 @@ async function exchangeGoogleCode(body: OAuthTokenRequest) {
   }
 
   return postTokenRequest(GOOGLE_TOKEN_URL, params);
-}
-
-async function exchangeKakaoCode(body: OAuthTokenRequest) {
-  const clientId = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
-  const clientSecret = process.env.KAKAO_CLIENT_SECRET;
-  if (!clientId) {
-    throw new Error('Kakao REST API key is not configured.');
-  }
-
-  const params: Record<string, string> = {
-    grant_type: 'authorization_code',
-    client_id: clientId,
-    code: body.code,
-    redirect_uri: body.redirectUri,
-  };
-
-  if (clientSecret) {
-    params.client_secret = clientSecret;
-  }
-
-  return postTokenRequest(KAKAO_TOKEN_URL, params);
 }
 
 async function postTokenRequest(url: string, params: Record<string, string>) {

@@ -82,7 +82,7 @@ export const privacyDocument: LegalDocument = {
         'Landit는 로그인, 인프라 운영, 음성 처리, AI 피드백 제공 등 서비스 운영에 필요한 범위에서 외부 서비스를 사용할 수 있습니다.',
       ],
       bullets: [
-        '소셜 로그인 제공자: Google, Kakao',
+        '소셜 로그인 제공자: Google',
         '서비스 인프라: 웹 호스팅, 서버, 데이터베이스, 저장소',
         'AI 및 음성 처리: 음성 인식, TTS, 회화 피드백 생성',
         '이용 분석: 서비스 안정성 및 품질 개선을 위한 통계 처리',
@@ -131,7 +131,7 @@ export const termsDocument: LegalDocument = {
       id: 'account',
       title: '2. 회원가입과 계정',
       paragraphs: [
-        '이용자는 Google 또는 Kakao 등 Landit가 제공하는 소셜 로그인 방식으로 가입할 수 있습니다. 이용자는 자신의 계정을 안전하게 관리해야 하며, 타인의 계정을 사용할 수 없습니다.',
+        '이용자는 Google 등 Landit가 제공하는 소셜 로그인 방식으로 가입할 수 있습니다. 이용자는 자신의 계정을 안전하게 관리해야 하며, 타인의 계정을 사용할 수 없습니다.',
       ],
       bullets: [
         '소셜 로그인 제공자의 정책 변경에 따라 로그인 방식이 변경될 수 있습니다.',
