@@ -15,6 +15,14 @@ const DEMOS: FloatingThought[] = [
 export function ThoughtStep({ onNext }: { onNext: () => void }) {
   const [index, setIndex] = useState(0);
 
+  // Sona 표정 이미지 3종을 마운트 즉시 미리 로드 — 카드가 바뀔 때 늦게 뜨지 않게
+  useEffect(() => {
+    for (const t of ['good', 'normal', 'bad']) {
+      const img = new Image();
+      img.src = `/images/character/sona-${t}.webp`;
+    }
+  }, []);
+
   // 표정·예시가 하나씩 바뀌며 반복 시연
   useEffect(() => {
     const timer = setTimeout(() => setIndex((p) => (p + 1) % DEMOS.length), 2600);

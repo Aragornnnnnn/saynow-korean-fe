@@ -38,7 +38,8 @@ export function ThoughtCard({ thought }: { thought: FloatingThought }) {
           style={{ width: 104, height: 104 }}
         />
       </div>
-      <p className='mt-5 text-center text-base italic leading-relaxed text-zinc-800'>{thought.text}</p>
+      {/* 2줄분 높이 고정 — 텍스트 길이가 달라도 카드 크기가 흔들리지 않게 */}
+      <p className='mt-5 flex min-h-[3.25rem] items-center justify-center text-center text-base italic leading-relaxed text-zinc-800'>{thought.text}</p>
     </div>
   );
 }
