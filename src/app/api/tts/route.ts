@@ -47,12 +47,41 @@ export async function GET(request: Request) {
 
   const pcm = Buffer.from(await res.arrayBuffer());
   const wav = Buffer.concat([wavHeader(pcm.length), pcm]);
+  const total = wav.length;
 
-  return new NextResponse(wav, {
-    headers: {
-      'Content-Type': 'audio/wav',
-      'Cache-Control': 'public, max-age=86400',
-    },
+  // iOS/macOS Safari(WebKit)는 오디오 재생 시 Range 요청을 보내고 206 + Content-Length를
+  // 기대한다. 전체 바디를 200(chunked, Content-Length 없음)으로 주면 소스를 거부해
+  // (iOS: MEDIA_ERR_SRC_NOT_SUPPORTED, macOS: play() AbortError) 소리가 안 난다.
+  const baseHeaders: Record<string, string> = {
+    'Content-Type': 'audio/wav',
+    'Cache-Control': 'public, max-age=86400',
+    'Accept-Ranges': 'bytes',
+  };
+
+  const range = request.headers.get('range');
+  const match = range ? /^bytes=(\d*)-(\d*)$/.exec(range) : null;
+  if (match) {
+    const start = match[1] ? parseInt(match[1], 10) : 0;
+    const end = match[2] ? Math.min(parseInt(match[2], 10), total - 1) : total - 1;
+    if (Number.isNaN(start) || start > end || start >= total) {
+      return new NextResponse(null, {
+        status: 416, // Range Not Satisfiable
+        headers: { ...baseHeaders, 'Content-Range': `bytes */${total}` },
+      });
+    }
+    const chunk = wav.subarray(start, end + 1);
+    return new NextResponse(new Uint8Array(chunk), {
+      status: 206, // Partial Content
+      headers: {
+        ...baseHeaders,
+        'Content-Range': `bytes ${start}-${end}/${total}`,
+        'Content-Length': String(chunk.length),
+      },
+    });
+  }
+
+  return new NextResponse(new Uint8Array(wav), {
+    headers: { ...baseHeaders, 'Content-Length': String(total) },
   });
 }
 
