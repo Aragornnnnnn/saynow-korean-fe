@@ -18,6 +18,7 @@ import type { ApiScenario } from '@/lib/api';
 import { useScenariosQuery } from '@/queries/scenarios';
 import { prefetchSession } from '@/lib/api';
 import { getScenarioImage } from '@/lib/scenarioImages';
+import { scenarioVoice } from '@/lib/scenarioVoice';
 import { useScenarioStore } from '@/store/scenarioStore';
 import { useAuthStore } from '@/store/authStore';
 import { shouldShowOnboarding } from '@/lib/onboarding';
@@ -87,7 +88,8 @@ function Home() {
     if (!data) return;
     const visible = data.categories.find((c) => !c.categoryLocked)?.scenarios.slice(0, 3) ?? [];
     visible.forEach((s) => {
-      if (!s.locked && s.firstQuestionPreview?.aiQuestion) prefetch(s.firstQuestionPreview.aiQuestion);
+      if (!s.locked && s.firstQuestionPreview?.aiQuestion)
+        prefetch(s.firstQuestionPreview.aiQuestion, scenarioVoice(s.scenarioId));
     });
   }, [data, prefetch]);
 

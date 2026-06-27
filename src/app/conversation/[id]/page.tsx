@@ -15,6 +15,7 @@ import { prepareNativeStt, startNativeStt, stopNativeStt, stopNativeTts, STT_END
 import { webBridge } from '@/bridge/webBridge';
 import { useTts } from '@/hooks/useTts';
 import { getScenarioImage } from '@/lib/scenarioImages';
+import { scenarioVoice } from '@/lib/scenarioVoice';
 import ExitConfirmModal from './ExitConfirmModal';
 import MicDeniedModal from './MicDeniedModal';
 import { AiBubble } from '@/components/chat/AiBubble';
@@ -36,6 +37,8 @@ type PageState = 'loading' | 'idle' | 'recording' | 'submitting' | 'navigating' 
 export default function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  // 화자가 여성인 시나리오는 여성 보이스로 TTS 재생
+  const speakerVoice = scenarioVoice(Number(id));
 
   const [pageState, setPageState] = useState<PageState>('loading');
   const [error, setError] = useState<string | null>(null);
@@ -120,10 +123,10 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === 'ai' && lastMsg.text !== '...') {
       setBgBlurred(true);
-      speak(lastMsg.text, null);
+      speak(lastMsg.text, null, { voice: speakerVoice });
     }
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [messages, speak]);
+  }, [messages, speak, speakerVoice]);
 
   useBackButtonBridge(() => {
     if (showExitModal) {
@@ -143,7 +146,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
     try {
       const result = await submitUtterance(sessionId, text);
       // 다음 AI 질문 TTS를 속마음 오버레이가 떠 있는 동안 미리 받아둠 — 질문 뜰 때 지연 없이 재생
-      if (result.nextTurn?.aiQuestion) prefetch(result.nextTurn.aiQuestion);
+      if (result.nextTurn?.aiQuestion) prefetch(result.nextTurn.aiQuestion, speakerVoice);
       track(EVENTS.TURN_COMPLETED, { scenario_id: Number(id), session_id: sessionId, turn_index: turnIndexRef.current, stt_engine: sttEngineRef.current });
       turnIndexRef.current += 1;
 

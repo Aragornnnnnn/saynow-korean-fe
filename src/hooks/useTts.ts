@@ -8,6 +8,14 @@ interface SpeakOptions {
   // durationMs: 실제 오디오 길이(ms). 자막/하이라이트를 음성에 맞추는 용도. 모르면 undefined.
   onStart?: (durationMs?: number) => void;
   onEnd?: () => void;
+  // voice: /api/tts 보이스 선택(예: 'female'). 없으면 기본 대화 보이스.
+  voice?: string;
+}
+
+// 클라우드 TTS URL 생성 — voice 지정 시 보이스 파라미터 추가
+function buildTtsUrl(text: string, voice?: string) {
+  const v = voice ? `&voice=${encodeURIComponent(voice)}` : '';
+  return `/api/tts?text=${encodeURIComponent(text)}${v}`;
 }
 
 // 0.05초 무음 WAV. iOS Safari에서 오디오 엘리먼트를 unlock할 때만 재생.
@@ -74,7 +82,7 @@ export function useTts() {
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
     audio.onended = () => options?.onEnd?.();
     audio.onerror = () => speakWithBrowser(text, options);
-    audio.src = `/api/tts?text=${encodeURIComponent(text)}`;
+    audio.src = buildTtsUrl(text, options?.voice);
     audio.play().catch(() => speakWithBrowser(text, options));
   }, []);
 
@@ -90,9 +98,9 @@ export function useTts() {
   }, []);
 
   // 재생 전에 미리 호출해 오디오를 HTTP 캐시에 데워둠 — 실제 speak 때 지연 없이 바로 재생
-  const prefetch = useCallback((text: string) => {
+  const prefetch = useCallback((text: string, voice?: string) => {
     if (!text || webBridge.isAvailable()) return; // 네이티브는 자체 TTS라 불필요
-    fetch(`/api/tts?text=${encodeURIComponent(text)}`).catch(() => {});
+    fetch(buildTtsUrl(text, voice)).catch(() => {});
   }, []);
 
   return { speak, stop, prefetch, unlock };

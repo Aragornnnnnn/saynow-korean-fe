@@ -19,13 +19,19 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'OPENROUTER_API_KEY가 설정되지 않았습니다.' }, { status: 500 });
   }
 
-  // voice=feedback: 교정 카드 발음용 한국어 여성 보이스(대화 화면 보이스와 구분). 그 외엔 기본 대화 보이스
+  // voice 파라미터로 화자 보이스를 고른다.
+  //  - feedback: 교정 카드 발음용 한국어 여성 보이스
+  //  - female: 여성 화자 시나리오의 대화 보이스
+  //  - 그 외: 기본 대화(남성) 보이스
   // env가 빈 문자열이면 ??는 폴백하지 않아(빈 voice → OpenRouter 500) 공백 제거 후 값이 있을 때만 쓴다.
-  const isFeedback = params.get('voice') === 'feedback';
+  const voiceKey = params.get('voice');
   const pick = (env: string | undefined, fallback: string) => env?.trim() || fallback;
-  const voice = isFeedback
-    ? pick(process.env.OPENROUTER_TTS_VOICE_FEEDBACK, 'Kore')
-    : pick(process.env.OPENROUTER_TTS_VOICE, 'Orus');
+  const voice =
+    voiceKey === 'feedback'
+      ? pick(process.env.OPENROUTER_TTS_VOICE_FEEDBACK, 'Kore')
+      : voiceKey === 'female'
+        ? pick(process.env.OPENROUTER_TTS_VOICE_FEMALE, 'Kore')
+        : pick(process.env.OPENROUTER_TTS_VOICE, 'Orus');
 
   const res = await fetch(OPENROUTER_TTS_URL, {
     method: 'POST',
