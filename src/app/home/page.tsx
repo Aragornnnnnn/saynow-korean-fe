@@ -21,6 +21,7 @@ import { getScenarioImage } from '@/lib/scenarioImages';
 import { useScenarioStore } from '@/store/scenarioStore';
 import { useAuthStore } from '@/store/authStore';
 import { shouldShowOnboarding } from '@/lib/onboarding';
+import { useTts } from '@/hooks/useTts';
 import { track, EVENTS } from '@/lib/analytics';
 
 export default function Page() {
@@ -46,6 +47,7 @@ function Home() {
   const [unlockedCardIndex, setUnlockedCardIndex] = useState<number | null>(null);
   const { data, isPending, error, refetch } = useScenariosQuery(_hasHydrated && !!refreshToken);
   const setScenario = useScenarioStore((s) => s.setScenario);
+  const { unlock } = useTts();
 
   useBackButtonBridge(() => exitApp());
 
@@ -100,6 +102,7 @@ function Home() {
 
   function handleStart(scenario: ApiScenario) {
     if (scenario.locked) return;
+    unlock(); // iOS Safari: 대화 화면 첫 AI TTS 자동재생을 위해 탭 안에서 오디오 unlock
     track(EVENTS.SCENARIO_STARTED, { scenario_id: scenario.scenarioId, is_retry: scenario.completed });
     setScenario({
       scenarioId: scenario.scenarioId,

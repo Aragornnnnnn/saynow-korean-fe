@@ -10,9 +10,23 @@ interface SpeakOptions {
   onEnd?: () => void;
 }
 
+// 0.05초 무음 WAV. iOS Safari에서 오디오 엘리먼트를 unlock할 때만 재생.
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+
+// 클라우드 TTS 오디오를 화면 전환과 무관하게 재사용하기 위한 모듈 싱글톤.
+// iOS Safari는 한 번 user gesture 안에서 unlock한 엘리먼트만 이후 자동 재생을 허용하므로
+// 페이지마다 new Audio()를 만들면 영원히 잠긴 상태가 된다. 하나만 만들어 공유한다.
+let sharedAudio: HTMLAudioElement | null = null;
+let audioUnlocked = false;
+
+function getSharedAudio(): HTMLAudioElement {
+  if (!sharedAudio) sharedAudio = new Audio();
+  return sharedAudio;
+}
+
 export function useTts() {
   const onEndRef = useRef<(() => void) | undefined>(undefined);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     return webBridge.subscribe((message) => {
@@ -23,6 +37,26 @@ export function useTts() {
     });
   }, []);
 
+  // iOS Safari 대응: 사용자 탭(gesture) 안에서 호출해 공유 오디오 재생 권한을 미리 확보.
+  // 무음을 한 번 재생해 두면 이후 effect 등 gesture 밖에서도 speak()가 동작한다.
+  const unlock = useCallback(() => {
+    if (audioUnlocked || webBridge.isAvailable()) return;
+    const audio = getSharedAudio();
+    audio.muted = true;
+    audio.src = SILENT_WAV;
+    audio
+      .play()
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.muted = false;
+        audioUnlocked = true;
+      })
+      .catch(() => {
+        audio.muted = false;
+      });
+  }, []);
+
   const speak = useCallback((text: string, ttsUrl: string | null, options?: SpeakOptions) => {
     if (playNativeTts(text, ttsUrl ?? null)) {
       onEndRef.current = options?.onEnd;
@@ -30,27 +64,25 @@ export function useTts() {
       return;
     }
 
-    // 웹: 네이버 클라우드 TTS 오디오 재생. 실패하면 브라우저 음성합성으로 폴백.
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    // 웹: 클라우드 TTS 오디오 재생. 실패하면 브라우저 음성합성으로 폴백.
     window.speechSynthesis?.cancel();
 
-    const audio = new Audio(`/api/tts?text=${encodeURIComponent(text)}`);
-    audioRef.current = audio;
+    const audio = getSharedAudio();
+    audio.pause();
+    audio.muted = false;
     audio.onplay = () =>
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
     audio.onended = () => options?.onEnd?.();
     audio.onerror = () => speakWithBrowser(text, options);
+    audio.src = `/api/tts?text=${encodeURIComponent(text)}`;
     audio.play().catch(() => speakWithBrowser(text, options));
   }, []);
 
   const stop = useCallback(() => {
     stopNativeTts();
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    if (sharedAudio) {
+      sharedAudio.pause();
+      sharedAudio.onended = null;
     }
     window.speechSynthesis?.cancel();
     onEndRef.current?.();
@@ -63,7 +95,7 @@ export function useTts() {
     fetch(`/api/tts?text=${encodeURIComponent(text)}`).catch(() => {});
   }, []);
 
-  return { speak, stop, prefetch };
+  return { speak, stop, prefetch, unlock };
 }
 
 // 클라우드 TTS 실패 시 브라우저 내장 음성합성으로 폴백

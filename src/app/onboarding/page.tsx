@@ -31,7 +31,7 @@ export default function OnboardingPage() {
   const member = useAuthStore((s) => s.member);
   const setScenario = useScenarioStore((s) => s.setScenario);
   const { data, isPending, error, refetch } = useScenariosQuery(isReady);
-  const { speak, stop, prefetch } = useTts();
+  const { speak, stop, prefetch, unlock } = useTts();
 
   const [step, setStep] = useState<OnboardingStep>('intro');
   const [micState, setMicState] = useState<MicPermissionState>('idle');
@@ -77,9 +77,21 @@ export default function OnboardingPage() {
     return () => clearTimeout(timer);
   }, [step, firstScenario?.scenarioId]);
 
+  // iOS Safari는 AudioContext가 suspended 상태로 시작하므로 매번 new 하지 않고
+  // 하나를 재사용한다. intro 탭(gesture)에서 resume해 둬야 이후 자동 ding이 들린다.
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  function getAudioCtx(): AudioContext | null {
+    if (!audioCtxRef.current) {
+      try { audioCtxRef.current = new AudioContext(); } catch { return null; }
+    }
+    return audioCtxRef.current;
+  }
+
   function playDing() {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
     try {
-      const ctx = new AudioContext();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
@@ -233,7 +245,7 @@ export default function OnboardingPage() {
       <AnimatePresence mode="wait">
         {step === 'intro' && (
           <StepMotion key="intro">
-            <IntroStep nickname={member?.nickname ?? ''} onNext={() => { track(EVENTS.ONBOARDING_STEP_COMPLETED, { step_name: 'intro' }); goToStep('sound'); }} />
+            <IntroStep nickname={member?.nickname ?? ''} onNext={() => { unlock(); getAudioCtx()?.resume(); track(EVENTS.ONBOARDING_STEP_COMPLETED, { step_name: 'intro' }); goToStep('sound'); }} />
           </StepMotion>
         )}
 

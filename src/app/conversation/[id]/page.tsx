@@ -57,7 +57,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
   const deepgramSocketRef = useRef<WebSocket | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
-  const { speak, stop, prefetch } = useTts();
+  const { speak, stop, prefetch, unlock } = useTts();
   const queryClient = useQueryClient();
   const isNative = webBridge.isAvailable();
   const sessionStartedRef = useRef(false);
@@ -471,6 +471,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
   }
 
   function handleMicPress() {
+    unlock(); // iOS Safari: 직접 진입/이후 턴 대비 오디오 unlock (싱글톤이라 이미 풀렸으면 무시됨)
     setEmptyToast(false);
     startStt();
   }
