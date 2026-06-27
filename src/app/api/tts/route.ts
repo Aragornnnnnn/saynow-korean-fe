@@ -8,7 +8,8 @@ const BITS = 16;
 const CHANNELS = 1;
 
 export async function GET(request: Request) {
-  const text = new URL(request.url).searchParams.get('text')?.trim();
+  const params = new URL(request.url).searchParams;
+  const text = params.get('text')?.trim();
   if (!text) {
     return NextResponse.json({ error: 'text 파라미터가 필요합니다.' }, { status: 400 });
   }
@@ -18,6 +19,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'OPENROUTER_API_KEY가 설정되지 않았습니다.' }, { status: 500 });
   }
 
+  // voice=feedback: 교정 카드 발음용 한국어 여성 보이스(대화 화면 보이스와 구분). 그 외엔 기본 대화 보이스
+  const voice =
+    params.get('voice') === 'feedback'
+      ? process.env.OPENROUTER_TTS_VOICE_FEEDBACK ?? 'Kore'
+      : process.env.OPENROUTER_TTS_VOICE ?? 'Orus';
+
   const res = await fetch(OPENROUTER_TTS_URL, {
     method: 'POST',
     headers: {
@@ -26,7 +33,7 @@ export async function GET(request: Request) {
     },
     body: JSON.stringify({
       model: process.env.OPENROUTER_TTS_MODEL ?? 'google/gemini-3.1-flash-tts-preview',
-      voice: process.env.OPENROUTER_TTS_VOICE ?? 'Orus',
+      voice,
       input: text,
       response_format: 'pcm',
     }),

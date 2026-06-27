@@ -15,6 +15,7 @@ import { useScenarioStore } from '@/store/scenarioStore';
 import { AiBubble } from '@/components/chat/AiBubble';
 import { UserBubble } from '@/components/chat/UserBubble';
 import { Button } from '@/components/ui/Button';
+import { PronunciationButton } from '@/components/PronunciationButton';
 import { useScrollShadow } from '@/hooks/useScrollShadow';
 import { track, EVENTS } from '@/lib/analytics';
 
@@ -593,7 +594,10 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
                   <div className='flex items-center gap-2 flex-wrap'>
                     <p className='text-base font-semibold text-zinc-600 line-through decoration-zinc-600'>{turn.userUtterance}</p>
                     <span className='text-zinc-300 font-bold'>→</span>
-                    <p className='text-base font-bold text-zinc-800'>{turn.correctionExpression}</p>
+                    <span className='inline-flex items-center gap-1'>
+                      <p className='text-base font-bold text-zinc-800'>{turn.correctionExpression}</p>
+                      <PronunciationButton text={turn.correctionExpression} />
+                    </span>
                   </div>
                   {turn.correctionReason && (
                     <p className='text-sm text-zinc-500 leading-relaxed border-t border-zinc-200 pt-3'>{turn.correctionReason}</p>
