@@ -45,17 +45,20 @@ export function useTts() {
     // iOS는 muted 재생을 "사용자가 시작한 재생"으로 안 쳐서 unlock이 안 풀린다.
     // SILENT_WAV는 데이터 자체가 무음이라 음소거 없이 틀어도 소리가 안 난다.
     audio.src = SILENT_WAV;
+    console.log('[tts] unlock 시도');
     audio
       .play()
       .then(() => {
         audio.pause();
         audio.currentTime = 0;
         audioUnlocked = true;
+        console.log('[tts] unlock 성공');
       })
-      .catch(() => {});
+      .catch((e) => console.warn('[tts] unlock 실패', e?.name, e?.message));
   }, []);
 
   const speak = useCallback((text: string, ttsUrl: string | null, options?: SpeakOptions) => {
+    console.log('[tts] speak 호출 unlocked=', audioUnlocked, 'native=', webBridge.isAvailable());
     if (playNativeTts(text, ttsUrl ?? null)) {
       onEndRef.current = options?.onEnd;
       options?.onStart?.();
@@ -71,9 +74,18 @@ export function useTts() {
     audio.onplay = () =>
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
     audio.onended = () => options?.onEnd?.();
-    audio.onerror = () => speakWithBrowser(text, options);
+    audio.onerror = () => {
+      console.warn('[tts] audio onerror', audio.error?.code, audio.error?.message);
+      speakWithBrowser(text, options);
+    };
     audio.src = `/api/tts?text=${encodeURIComponent(text)}`;
-    audio.play().catch(() => speakWithBrowser(text, options));
+    audio
+      .play()
+      .then(() => console.log('[tts] play 성공'))
+      .catch((e) => {
+        console.warn('[tts] play 실패', e?.name, e?.message);
+        speakWithBrowser(text, options);
+      });
   }, []);
 
   const stop = useCallback(() => {
