@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     },
     body: JSON.stringify({
       model: process.env.OPENROUTER_TTS_MODEL ?? 'google/gemini-3.1-flash-tts-preview',
-      voice: process.env.OPENROUTER_TTS_VOICE ?? 'Charon',
+      voice: process.env.OPENROUTER_TTS_VOICE ?? 'Orus',
       input: text,
       response_format: 'pcm',
     }),
