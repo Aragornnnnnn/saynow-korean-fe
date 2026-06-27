@@ -56,6 +56,9 @@ export function useTts() {
         console.log('[tts] unlock 성공');
       })
       .catch((e) => {
+        // AbortError는 직후 startStt()→stop()의 pause()가 무음 재생을 끊어서 나는 것 —
+        // 제스처 안에서 play()를 호출한 시점에 엘리먼트는 이미 활성화됐으므로 무해. 무시한다.
+        if (e?.name === 'AbortError') return;
         console.warn('[tts] unlock 실패', e?.name, e?.message);
         setTtsStatus(`unlock 실패: ${e?.name ?? e}`);
       });
