@@ -13,6 +13,9 @@ export const SOUND_QUESTIONS = [
   '제 말 또렷하게 들리나요?',
   '안녕하세요! 만나서 반가워요.',
 ];
+// 위 문장을 미리 구운 정적 오디오(scripts/generate-onboarding-tts.mjs). 실시간 생성 지연 제거용.
+// 인덱스가 SOUND_QUESTIONS와 1:1 대응. 문장 변경 시 스크립트 재실행 필요.
+export const SOUND_AUDIO_SRCS = SOUND_QUESTIONS.map((_, i) => `/onboarding-tts/sound-${i}.wav`);
 export const CHAT_PREVIEW_MESSAGES = [
   { role: 'ai', text: 'What food do you like?' },
   { role: 'user', text: 'I like pizza.' },

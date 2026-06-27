@@ -21,7 +21,7 @@ import { SoundStep } from './_steps/SoundStep';
 import { MicStep } from './_steps/MicStep';
 import { ThoughtStep } from './_steps/ThoughtStep';
 import { ScenarioStep } from './_steps/ScenarioStep';
-import { STEP_ORDER, FALLBACK_QUESTION, SOUND_QUESTIONS, type OnboardingStep, type MicPermissionState } from './_types';
+import { STEP_ORDER, FALLBACK_QUESTION, SOUND_QUESTIONS, SOUND_AUDIO_SRCS, type OnboardingStep, type MicPermissionState } from './_types';
 import { track, EVENTS } from '@/lib/analytics';
 
 export default function OnboardingPage() {
@@ -60,8 +60,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     track(EVENTS.ONBOARDING_STARTED);
-    prefetch(FALLBACK_QUESTION); // 사운드 스텝 첫 음성을 미리 받아둠 (intro 보는 동안 준비)
-  }, [prefetch]);
+  }, []);
 
   // 온보딩 끝나고 진입할 첫 시나리오의 인사말 음성도 미리 데움 — 대화 첫 음성 지연 방지
   useEffect(() => {
@@ -116,13 +115,13 @@ export default function OnboardingPage() {
 
   const playQuestion = useCallback((isRepeat = false) => {
     if (!soundStepActiveRef.current) return; // 사운드 스텝을 벗어났으면 재생하지 않음
-    const nextQuestion = (() => {
-      if (!isRepeat) return FALLBACK_QUESTION;
+    const { text: nextQuestion, src: nextSrc } = (() => {
+      if (!isRepeat) return { text: FALLBACK_QUESTION, src: SOUND_AUDIO_SRCS[0] }; // FALLBACK == SOUND_QUESTIONS[0]
       let idx = lastQuestionIndexRef.current;
       do { idx = Math.floor(Math.random() * SOUND_QUESTIONS.length); }
       while (idx === lastQuestionIndexRef.current && SOUND_QUESTIONS.length > 1);
       lastQuestionIndexRef.current = idx;
-      return SOUND_QUESTIONS[idx];
+      return { text: SOUND_QUESTIONS[idx], src: SOUND_AUDIO_SRCS[idx] };
     })();
 
     if (isRepeat) {
@@ -133,6 +132,7 @@ export default function OnboardingPage() {
         setSoundBubbleVisible(true);
         playDing();
         speak(nextQuestion, null, {
+          webSrc: nextSrc,
           onStart: (durationMs) => { setSoundDurationMs(durationMs); setIsSpeaking(true); },
           onEnd: () => {
             setIsSpeaking(false);
@@ -145,6 +145,7 @@ export default function OnboardingPage() {
       return;
     }
     speak(nextQuestion, null, {
+      webSrc: nextSrc,
       onStart: (durationMs) => { setSoundDurationMs(durationMs); setIsSpeaking(true); },
       onEnd: () => {
         setIsSpeaking(false);

@@ -10,6 +10,8 @@ interface SpeakOptions {
   onEnd?: () => void;
   // voice: /api/tts 보이스 선택(예: 'female'). 없으면 기본 대화 보이스.
   voice?: string;
+  // webSrc: 웹에서 /api/tts 대신 재생할 미리 생성된 정적 오디오 URL(온보딩 등). 네이티브는 무시(자체 TTS).
+  webSrc?: string;
 }
 
 // 클라우드 TTS URL 생성 — voice 지정 시 보이스 파라미터 추가
@@ -82,7 +84,7 @@ export function useTts() {
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
     audio.onended = () => options?.onEnd?.();
     audio.onerror = () => speakWithBrowser(text, options);
-    audio.src = buildTtsUrl(text, options?.voice);
+    audio.src = options?.webSrc ?? buildTtsUrl(text, options?.voice);
     audio.play().catch(() => speakWithBrowser(text, options));
   }, []);
 
@@ -97,10 +99,13 @@ export function useTts() {
     onEndRef.current = undefined;
   }, []);
 
-  // 재생 전에 미리 호출해 오디오를 HTTP 캐시에 데워둠 — 실제 speak 때 지연 없이 바로 재생
+  // 재생 전에 미리 호출해 오디오를 HTTP 캐시에 데워둠 — 실제 speak 때 지연 없이 바로 재생.
+  // body를 끝까지 읽어야 브라우저가 전체 오디오를 캐시에 저장한다(안 읽으면 중간에 취소돼 캐시 미스).
   const prefetch = useCallback((text: string, voice?: string) => {
     if (!text || webBridge.isAvailable()) return; // 네이티브는 자체 TTS라 불필요
-    fetch(buildTtsUrl(text, voice)).catch(() => {});
+    fetch(buildTtsUrl(text, voice))
+      .then((res) => res.arrayBuffer())
+      .catch(() => {});
   }, []);
 
   return { speak, stop, prefetch, unlock };
