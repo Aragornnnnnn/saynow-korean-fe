@@ -6,8 +6,6 @@ import { AppBridge } from "@/providers/AppBridge";
 import { AmplitudeProvider } from "@/providers/AmplitudeProvider";
 import { Toaster } from "@/components/ui/Toast";
 import { MSWProvider } from "@/mocks/MSWProvider";
-import { DebugConsole } from "@/components/DebugConsole";
-import { TtsDebugBanner } from "@/components/TtsDebugBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -87,8 +85,6 @@ export default function RootLayout({
           </AmplitudeProvider>
         </div>
         <Toaster />
-        <TtsDebugBanner />
-        <DebugConsole />
         <Analytics />
       </body>
     </html>

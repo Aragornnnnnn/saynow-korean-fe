@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { playNativeTts, stopNativeTts } from '@/bridge/commands';
 import { webBridge } from '@/bridge/webBridge';
-import { setTtsStatus, clearTtsStatus } from '@/lib/ttsDebug';
 
 interface SpeakOptions {
   // durationMs: 실제 오디오 길이(ms). 자막/하이라이트를 음성에 맞추는 용도. 모르면 undefined.
@@ -46,28 +45,19 @@ export function useTts() {
     // iOS는 muted 재생을 "사용자가 시작한 재생"으로 안 쳐서 unlock이 안 풀린다.
     // SILENT_WAV는 데이터 자체가 무음이라 음소거 없이 틀어도 소리가 안 난다.
     audio.src = SILENT_WAV;
-    console.log('[tts] unlock 시도');
     audio
       .play()
       .then(() => {
         audio.pause();
         audio.currentTime = 0;
         audioUnlocked = true;
-        console.log('[tts] unlock 성공');
       })
-      .catch((e) => {
-        // AbortError는 직후 startStt()→stop()의 pause()가 무음 재생을 끊어서 나는 것 —
-        // 제스처 안에서 play()를 호출한 시점에 엘리먼트는 이미 활성화됐으므로 무해. 무시한다.
-        if (e?.name === 'AbortError') return;
-        console.warn('[tts] unlock 실패', e?.name, e?.message);
-        setTtsStatus(`unlock 실패: ${e?.name ?? e}`);
-      });
+      // 무음 unlock 실패는 best-effort라 무시 (직후 stop()의 pause로 인한 AbortError 포함).
+      // 제스처 안에서 play()를 호출한 시점에 엘리먼트는 이미 활성화되므로 무해.
+      .catch(() => {});
   }, []);
 
   const speak = useCallback((text: string, ttsUrl: string | null, options?: SpeakOptions) => {
-    const mode = webBridge.isAvailable() ? 'native' : 'web';
-    console.log('[tts] speak 호출 unlocked=', audioUnlocked, 'mode=', mode);
-    setTtsStatus(`speak 호출됨 (${mode}, unlocked=${audioUnlocked})`);
     if (playNativeTts(text, ttsUrl ?? null)) {
       onEndRef.current = options?.onEnd;
       options?.onStart?.();
@@ -80,40 +70,12 @@ export function useTts() {
     const audio = getSharedAudio();
     audio.pause();
     audio.muted = false;
-    audio.onplay = () => {
-      const dur = Number.isFinite(audio.duration) ? audio.duration.toFixed(1) : '?';
-      setTtsStatus(`재생 시작 dur=${dur}s muted=${audio.muted} vol=${audio.volume}`);
+    audio.onplay = () =>
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
-    };
-    audio.onended = () => {
-      clearTtsStatus();
-      options?.onEnd?.();
-    };
-    audio.onerror = () => {
-      console.warn('[tts] audio onerror', audio.error?.code, audio.error?.message);
-      setTtsStatus(`audio onerror code=${audio.error?.code} (${mode})`);
-      speakWithBrowser(text, options);
-    };
+    audio.onended = () => options?.onEnd?.();
+    audio.onerror = () => speakWithBrowser(text, options);
     audio.src = `/api/tts?text=${encodeURIComponent(text)}`;
-    audio
-      .play()
-      .then(() => {
-        console.log('[tts] play 성공');
-        // play()는 resolve됐지만 실제 소리가 나는지는 별개 — 1.2초 뒤 재생 진행 상태를 찍는다.
-        // t(=currentTime)가 0에서 안 움직이면 시작 못 한 것, 움직이는데 안 들리면 출력/볼륨 문제.
-        setTimeout(() => {
-          if (audio.ended) return;
-          const dur = Number.isFinite(audio.duration) ? audio.duration.toFixed(1) : '?';
-          setTtsStatus(
-            `재생중 t=${audio.currentTime.toFixed(2)} paused=${audio.paused} muted=${audio.muted} vol=${audio.volume} dur=${dur}s`,
-          );
-        }, 1200);
-      })
-      .catch((e) => {
-        console.warn('[tts] play 실패', e?.name, e?.message);
-        setTtsStatus(`play 실패: ${e?.name ?? e} (${mode}, unlocked=${audioUnlocked})`);
-        speakWithBrowser(text, options);
-      });
+    audio.play().catch(() => speakWithBrowser(text, options));
   }, []);
 
   const stop = useCallback(() => {
