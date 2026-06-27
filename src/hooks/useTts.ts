@@ -42,19 +42,17 @@ export function useTts() {
   const unlock = useCallback(() => {
     if (audioUnlocked || webBridge.isAvailable()) return;
     const audio = getSharedAudio();
-    audio.muted = true;
+    // iOS는 muted 재생을 "사용자가 시작한 재생"으로 안 쳐서 unlock이 안 풀린다.
+    // SILENT_WAV는 데이터 자체가 무음이라 음소거 없이 틀어도 소리가 안 난다.
     audio.src = SILENT_WAV;
     audio
       .play()
       .then(() => {
         audio.pause();
         audio.currentTime = 0;
-        audio.muted = false;
         audioUnlocked = true;
       })
-      .catch(() => {
-        audio.muted = false;
-      });
+      .catch(() => {});
   }, []);
 
   const speak = useCallback((text: string, ttsUrl: string | null, options?: SpeakOptions) => {
