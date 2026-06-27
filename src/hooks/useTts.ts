@@ -57,10 +57,16 @@ export function useTts() {
     onEndRef.current = undefined;
   }, []);
 
-  return { speak, stop };
+  // 재생 전에 미리 호출해 오디오를 HTTP 캐시에 데워둠 — 실제 speak 때 지연 없이 바로 재생
+  const prefetch = useCallback((text: string) => {
+    if (!text || webBridge.isAvailable()) return; // 네이티브는 자체 TTS라 불필요
+    fetch(`/api/tts?text=${encodeURIComponent(text)}`).catch(() => {});
+  }, []);
+
+  return { speak, stop, prefetch };
 }
 
-// 네이버 TTS 실패 시 브라우저 내장 음성합성으로 폴백
+// 클라우드 TTS 실패 시 브라우저 내장 음성합성으로 폴백
 function speakWithBrowser(text: string, options?: SpeakOptions) {
   if (!window.speechSynthesis) {
     options?.onEnd?.();

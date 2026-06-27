@@ -57,7 +57,7 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
   const deepgramSocketRef = useRef<WebSocket | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
-  const { speak, stop } = useTts();
+  const { speak, stop, prefetch } = useTts();
   const queryClient = useQueryClient();
   const isNative = webBridge.isAvailable();
   const sessionStartedRef = useRef(false);
@@ -142,6 +142,8 @@ export default function ConversationPage({ params }: { params: Promise<{ id: str
 
     try {
       const result = await submitUtterance(sessionId, text);
+      // 다음 AI 질문 TTS를 속마음 오버레이가 떠 있는 동안 미리 받아둠 — 질문 뜰 때 지연 없이 재생
+      if (result.nextTurn?.aiQuestion) prefetch(result.nextTurn.aiQuestion);
       track(EVENTS.TURN_COMPLETED, { scenario_id: Number(id), session_id: sessionId, turn_index: turnIndexRef.current, stt_engine: sttEngineRef.current });
       turnIndexRef.current += 1;
 

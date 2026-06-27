@@ -31,7 +31,7 @@ export default function OnboardingPage() {
   const member = useAuthStore((s) => s.member);
   const setScenario = useScenarioStore((s) => s.setScenario);
   const { data, isPending, error, refetch } = useScenariosQuery(isReady);
-  const { speak, stop } = useTts();
+  const { speak, stop, prefetch } = useTts();
 
   const [step, setStep] = useState<OnboardingStep>('intro');
   const [micState, setMicState] = useState<MicPermissionState>('idle');
@@ -60,7 +60,8 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     track(EVENTS.ONBOARDING_STARTED);
-  }, []);
+    prefetch(FALLBACK_QUESTION); // 사운드 스텝 첫 음성을 미리 받아둠 (intro 보는 동안 준비)
+  }, [prefetch]);
 
   useEffect(() => {
     return () => {
