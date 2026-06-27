@@ -37,6 +37,7 @@ export const EVENTS = {
   FEEDBACK_DETAIL_VIEWED: 'Feedback Detail Viewed',
   FEEDBACK_TURN_NAVIGATED: 'Feedback Turn Navigated',
   FEEDBACK_EXITED_EARLY: 'Feedback Exited Early',
+  PRONUNCIATION_PLAYED: 'Pronunciation Played',
 
   // 의견 보내기 (만족도)
   OPINION_SHEET_OPENED: 'Opinion Sheet Opened',
@@ -60,6 +61,7 @@ export const PROPERTIES = {
   SCORE: 'score',
   FEEDBACK_TYPE: 'feedback_type',
   HAS_COMMENT: 'has_comment',
+  OUTCOME: 'outcome',
 } as const;
 
 export const USER_PROPERTIES = {

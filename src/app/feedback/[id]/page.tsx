@@ -228,7 +228,7 @@ function TurnDetailView({
         >
           {turns.map((turn, i) => (
             <SwiperSlide key={i} style={{ height: '100%' }}>
-              <TurnCard turn={turn} onScrollChange={setHasShadow} />
+              <TurnCard turn={turn} sessionId={sessionId} scenarioId={scenarioId} turnIndex={i} onScrollChange={setHasShadow} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -503,7 +503,10 @@ function FadeIn({ delay, children }: { delay: number; children: React.ReactNode 
   );
 }
 
-function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollChange?: (scrolled: boolean) => void }) {
+function TurnCard({ turn, sessionId, scenarioId, turnIndex, onScrollChange }: {
+  turn: ApiTurnFeedback; sessionId: number; scenarioId: number | null; turnIndex: number;
+  onScrollChange?: (scrolled: boolean) => void;
+}) {
   const isGood = turn.feedbackType === 'GOOD';
 
   return (
@@ -596,7 +599,10 @@ function TurnCard({ turn, onScrollChange }: { turn: ApiTurnFeedback; onScrollCha
                     <span className='text-zinc-300 font-bold'>→</span>
                     <span className='inline-flex items-center gap-1'>
                       <p className='text-base font-bold text-zinc-800'>{turn.correctionExpression}</p>
-                      <PronunciationButton text={turn.correctionExpression} />
+                      <PronunciationButton
+                        text={turn.correctionExpression}
+                        trackContext={{ scenario_id: scenarioId, session_id: sessionId, turn_index: turnIndex }}
+                      />
                     </span>
                   </div>
                   {turn.correctionReason && (

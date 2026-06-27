@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Volume2, Loader2 } from 'lucide-react';
+import { track, EVENTS } from '@/lib/analytics';
 
 type Status = 'idle' | 'loading' | 'playing';
 
@@ -11,7 +12,15 @@ function ttsUrl(text: string) {
   return `/api/tts?voice=feedback&text=${encodeURIComponent(text)}`;
 }
 
-export function PronunciationButton({ text, className }: { text: string; className?: string }) {
+export function PronunciationButton({
+  text,
+  className,
+  trackContext,
+}: {
+  text: string;
+  className?: string;
+  trackContext?: Record<string, unknown>;
+}) {
   const [status, setStatus] = useState<Status>('idle');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -43,10 +52,17 @@ export function PronunciationButton({ text, className }: { text: string; classNa
     setStatus('loading');
     const audio = new Audio(ttsUrl(text));
     audioRef.current = audio;
-    audio.onplaying = () => setStatus('playing');
+    // 탭당 한 번만 결과를 기록 (onerror와 play() reject 중복 방지)
+    let reported = false;
+    const report = (outcome: 'played' | 'error') => {
+      if (reported) return;
+      reported = true;
+      track(EVENTS.PRONUNCIATION_PLAYED, { ...trackContext, outcome });
+    };
+    audio.onplaying = () => { setStatus('playing'); report('played'); };
     audio.onended = stop;
-    audio.onerror = stop;
-    audio.play().catch(stop);
+    audio.onerror = () => { report('error'); stop(); };
+    audio.play().catch(() => { report('error'); stop(); });
   };
 
   return (
