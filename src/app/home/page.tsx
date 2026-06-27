@@ -275,7 +275,7 @@ function ScenarioCard({ scenario, onStart, isUnlocking = false }: { scenario: Ap
           src={getScenarioImage(scenario.scenarioId)}
           alt={scenario.scenarioTitle}
           className="w-full h-full object-cover"
-          style={{ filter: appearLocked ? 'grayscale(100%) brightness(0.7)' : 'grayscale(0%) brightness(1)', transition: isUnlocking ? 'filter 1s ease' : 'filter 0.5s ease' }}
+          style={{ objectPosition: 'center 35%', filter: appearLocked ? 'grayscale(100%) brightness(0.7)' : 'grayscale(0%) brightness(1)', transition: isUnlocking ? 'filter 1s ease' : 'filter 0.5s ease' }}
         />
         {isCompleted && (
           <div className="absolute top-3 right-3 rounded-full p-1.5" style={{ background: '#22c55e' }}>
