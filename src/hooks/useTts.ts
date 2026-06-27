@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { playNativeTts, stopNativeTts } from '@/bridge/commands';
 import { webBridge } from '@/bridge/webBridge';
+import { setTtsStatus, clearTtsStatus } from '@/lib/ttsDebug';
 
 interface SpeakOptions {
   // durationMs: 실제 오디오 길이(ms). 자막/하이라이트를 음성에 맞추는 용도. 모르면 undefined.
@@ -54,11 +55,16 @@ export function useTts() {
         audioUnlocked = true;
         console.log('[tts] unlock 성공');
       })
-      .catch((e) => console.warn('[tts] unlock 실패', e?.name, e?.message));
+      .catch((e) => {
+        console.warn('[tts] unlock 실패', e?.name, e?.message);
+        setTtsStatus(`unlock 실패: ${e?.name ?? e}`);
+      });
   }, []);
 
   const speak = useCallback((text: string, ttsUrl: string | null, options?: SpeakOptions) => {
-    console.log('[tts] speak 호출 unlocked=', audioUnlocked, 'native=', webBridge.isAvailable());
+    const mode = webBridge.isAvailable() ? 'native' : 'web';
+    console.log('[tts] speak 호출 unlocked=', audioUnlocked, 'mode=', mode);
+    setTtsStatus(`speak 호출됨 (${mode}, unlocked=${audioUnlocked})`);
     if (playNativeTts(text, ttsUrl ?? null)) {
       onEndRef.current = options?.onEnd;
       options?.onStart?.();
@@ -76,14 +82,19 @@ export function useTts() {
     audio.onended = () => options?.onEnd?.();
     audio.onerror = () => {
       console.warn('[tts] audio onerror', audio.error?.code, audio.error?.message);
+      setTtsStatus(`audio onerror code=${audio.error?.code} (${mode})`);
       speakWithBrowser(text, options);
     };
     audio.src = `/api/tts?text=${encodeURIComponent(text)}`;
     audio
       .play()
-      .then(() => console.log('[tts] play 성공'))
+      .then(() => {
+        console.log('[tts] play 성공');
+        clearTtsStatus();
+      })
       .catch((e) => {
         console.warn('[tts] play 실패', e?.name, e?.message);
+        setTtsStatus(`play 실패: ${e?.name ?? e} (${mode}, unlocked=${audioUnlocked})`);
         speakWithBrowser(text, options);
       });
   }, []);

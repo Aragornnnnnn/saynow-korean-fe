@@ -8,7 +8,6 @@ import { openNativeSettings, startNativeStt, stopNativeStt } from '@/bridge/comm
 import { useBridgeEvent } from '@/bridge/useBridgeEvent';
 import { webBridge } from '@/bridge/webBridge';
 import { useBackButtonBridge } from '@/hooks/useBackButtonBridge';
-import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useTts } from '@/hooks/useTts';
 import { prefetchSession, type ApiScenario } from '@/lib/api';
 import { markOnboardingComplete } from '@/lib/onboarding';
@@ -27,7 +26,8 @@ import { track, EVENTS } from '@/lib/analytics';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { isReady } = useRequireAuth();
+  // [임시] 로그인 없이 TTS만 확인하려고 인증 게이트 우회. 확인 끝나면 useRequireAuth로 되돌릴 것.
+  const isReady = true;
   const member = useAuthStore((s) => s.member);
   const setScenario = useScenarioStore((s) => s.setScenario);
   const { data, isPending, error, refetch } = useScenariosQuery(isReady);
