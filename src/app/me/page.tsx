@@ -13,7 +13,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { logout as requestLogout } from '@/lib/api/auth';
 import { deleteAccount } from '@/lib/api/member';
 import { useAuthStore } from '@/store/authStore';
-import { track, EVENTS } from '@/lib/analytics';
+import { track, resetUser, EVENTS } from '@/lib/analytics';
 import { toast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { BottomSheet } from '@/components/ui/BottomSheet';
@@ -65,6 +65,7 @@ export default function MyPage() {
     } finally {
       setIsLoggingOut(false);
       track(EVENTS.LOGOUT_COMPLETED);
+      resetUser();
       finishSignedOut();
     }
   }
@@ -76,6 +77,7 @@ export default function MyPage() {
     try {
       await deleteAccount();
       track(EVENTS.ACCOUNT_DELETION_COMPLETED);
+      resetUser();
       finishSignedOut();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong deleting your account.';
