@@ -20,10 +20,11 @@ export async function GET(request: Request) {
   }
 
   // voice=feedback: 교정 카드 발음용 한국어 여성 보이스(대화 화면 보이스와 구분). 그 외엔 기본 대화 보이스
-  const voice =
-    params.get('voice') === 'feedback'
-      ? process.env.OPENROUTER_TTS_VOICE_FEEDBACK ?? 'Kore'
-      : process.env.OPENROUTER_TTS_VOICE ?? 'Orus';
+  // env가 빈 문자열로 설정되면 ??는 폴백하지 않아 빈 voice가 OpenRouter로 가 500이 난다.
+  // 공백 제거 후 값이 있을 때만 쓰고, 없으면 항상 기본 보이스로 폴백한다.
+  const isFeedback = params.get('voice') === 'feedback';
+  const envVoice = (isFeedback ? process.env.OPENROUTER_TTS_VOICE_FEEDBACK : process.env.OPENROUTER_TTS_VOICE)?.trim();
+  const voice = envVoice || (isFeedback ? 'Kore' : 'Orus');
 
   const res = await fetch(OPENROUTER_TTS_URL, {
     method: 'POST',
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '');
-    console.error('[tts] OpenRouter TTS 실패:', res.status, detail);
+    console.error('[tts] OpenRouter TTS 실패:', res.status, 'voice=', voice, detail);
     return NextResponse.json({ error: 'TTS 생성 실패' }, { status: 502 });
   }
 
