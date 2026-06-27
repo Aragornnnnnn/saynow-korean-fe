@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       ? pick(process.env.OPENROUTER_TTS_VOICE_FEEDBACK, 'Kore')
       : voiceKey === 'female'
         ? pick(process.env.OPENROUTER_TTS_VOICE_FEMALE, 'Kore')
-        : pick(process.env.OPENROUTER_TTS_VOICE, 'Orus');
+        : pick(process.env.OPENROUTER_TTS_VOICE, 'Charon');
 
   const res = await fetch(OPENROUTER_TTS_URL, {
     method: 'POST',
