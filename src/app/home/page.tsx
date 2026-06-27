@@ -47,7 +47,7 @@ function Home() {
   const [unlockedCardIndex, setUnlockedCardIndex] = useState<number | null>(null);
   const { data, isPending, error, refetch } = useScenariosQuery(_hasHydrated && !!refreshToken);
   const setScenario = useScenarioStore((s) => s.setScenario);
-  const { unlock } = useTts();
+  const { unlock, prefetch } = useTts();
 
   useBackButtonBridge(() => exitApp());
 
@@ -80,6 +80,16 @@ function Home() {
     }, 1200);
     return () => clearTimeout(timer);
   }, [isUnlockMode, isPending, data]);
+
+  // 첫 사용자도 빠르게 — Start 누르기 전 둘러보는 동안 각 시나리오 첫 인사말 음성을 미리 데움.
+  // (콜드 TTS 생성 ~2초를 화면 탐색 시간과 겹쳐 가린다. 재생 로직은 안 건드림.)
+  useEffect(() => {
+    if (!data) return;
+    const visible = data.categories.find((c) => !c.categoryLocked)?.scenarios.slice(0, 3) ?? [];
+    visible.forEach((s) => {
+      if (!s.locked && s.firstQuestionPreview?.aiQuestion) prefetch(s.firstQuestionPreview.aiQuestion);
+    });
+  }, [data, prefetch]);
 
   const categories = data?.categories ?? [];
   const activeCategory = categories.find((c) => !c.categoryLocked);

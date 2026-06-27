@@ -63,6 +63,12 @@ export default function OnboardingPage() {
     prefetch(FALLBACK_QUESTION); // 사운드 스텝 첫 음성을 미리 받아둠 (intro 보는 동안 준비)
   }, [prefetch]);
 
+  // 온보딩 끝나고 진입할 첫 시나리오의 인사말 음성도 미리 데움 — 대화 첫 음성 지연 방지
+  useEffect(() => {
+    const q = firstScenario?.firstQuestionPreview?.aiQuestion;
+    if (q) prefetch(q);
+  }, [firstScenario, prefetch]);
+
   useEffect(() => {
     return () => {
       if (micTimerRef.current) clearTimeout(micTimerRef.current);
