@@ -77,9 +77,15 @@ export function useTts() {
     const audio = getSharedAudio();
     audio.pause();
     audio.muted = false;
-    audio.onplay = () =>
+    audio.onplay = () => {
+      const dur = Number.isFinite(audio.duration) ? audio.duration.toFixed(1) : '?';
+      setTtsStatus(`재생 시작 dur=${dur}s muted=${audio.muted} vol=${audio.volume}`);
       options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
-    audio.onended = () => options?.onEnd?.();
+    };
+    audio.onended = () => {
+      clearTtsStatus();
+      options?.onEnd?.();
+    };
     audio.onerror = () => {
       console.warn('[tts] audio onerror', audio.error?.code, audio.error?.message);
       setTtsStatus(`audio onerror code=${audio.error?.code} (${mode})`);
@@ -90,7 +96,15 @@ export function useTts() {
       .play()
       .then(() => {
         console.log('[tts] play 성공');
-        clearTtsStatus();
+        // play()는 resolve됐지만 실제 소리가 나는지는 별개 — 1.2초 뒤 재생 진행 상태를 찍는다.
+        // t(=currentTime)가 0에서 안 움직이면 시작 못 한 것, 움직이는데 안 들리면 출력/볼륨 문제.
+        setTimeout(() => {
+          if (audio.ended) return;
+          const dur = Number.isFinite(audio.duration) ? audio.duration.toFixed(1) : '?';
+          setTtsStatus(
+            `재생중 t=${audio.currentTime.toFixed(2)} paused=${audio.paused} muted=${audio.muted} vol=${audio.volume} dur=${dur}s`,
+          );
+        }, 1200);
       })
       .catch((e) => {
         console.warn('[tts] play 실패', e?.name, e?.message);
