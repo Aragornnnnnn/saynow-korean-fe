@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/Button';
 export function SoundStep({
   question,
   isSpeaking,
+  durationMs,
   bubbleVisible,
   onNext,
 }: {
   question: string;
   isSpeaking: boolean;
+  durationMs?: number;
   bubbleVisible: boolean;
   onNext: () => void;
 }) {
@@ -28,7 +30,8 @@ export function SoundStep({
       return;
     }
     const chars = question.length;
-    const duration = Math.max(2500, chars * 75);
+    // 실제 오디오 길이가 있으면 그에 맞춰 하이라이트, 없으면(브라우저 폴백 등) 글자 수로 추정
+    const duration = durationMs && durationMs > 0 ? durationMs : Math.max(2500, chars * 75);
     const start = Date.now();
     function tick() {
       const t = Math.min((Date.now() - start) / duration, 1);

@@ -39,6 +39,7 @@ export default function OnboardingPage() {
   const [scenarioUnlocked, setScenarioUnlocked] = useState(false);
   const [soundBubbleVisible, setSoundBubbleVisible] = useState(false);
   const [soundQuestion, setSoundQuestion] = useState(FALLBACK_QUESTION);
+  const [soundDurationMs, setSoundDurationMs] = useState<number | undefined>(undefined);
   const lastQuestionIndexRef = useRef(0);
   const micTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const micDeniedRef = useRef(false);
@@ -110,8 +111,8 @@ export default function OnboardingPage() {
         setSoundQuestion(nextQuestion);
         setSoundBubbleVisible(true);
         playDing();
-        setIsSpeaking(true);
         speak(nextQuestion, null, {
+          onStart: (durationMs) => { setSoundDurationMs(durationMs); setIsSpeaking(true); },
           onEnd: () => {
             setIsSpeaking(false);
             if (soundStepActiveRef.current) {
@@ -122,8 +123,8 @@ export default function OnboardingPage() {
       }, 300);
       return;
     }
-    setIsSpeaking(true);
     speak(nextQuestion, null, {
+      onStart: (durationMs) => { setSoundDurationMs(durationMs); setIsSpeaking(true); },
       onEnd: () => {
         setIsSpeaking(false);
         if (soundStepActiveRef.current) {
@@ -240,6 +241,7 @@ export default function OnboardingPage() {
             <SoundStep
               question={soundQuestion}
               isSpeaking={isSpeaking}
+              durationMs={soundDurationMs}
               bubbleVisible={soundBubbleVisible}
               onNext={() => { track(EVENTS.ONBOARDING_STEP_COMPLETED, { step_name: 'sound' }); goToStep('mic'); }}
             />

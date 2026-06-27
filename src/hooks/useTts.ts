@@ -5,7 +5,8 @@ import { playNativeTts, stopNativeTts } from '@/bridge/commands';
 import { webBridge } from '@/bridge/webBridge';
 
 interface SpeakOptions {
-  onStart?: () => void;
+  // durationMs: 실제 오디오 길이(ms). 자막/하이라이트를 음성에 맞추는 용도. 모르면 undefined.
+  onStart?: (durationMs?: number) => void;
   onEnd?: () => void;
 }
 
@@ -38,7 +39,8 @@ export function useTts() {
 
     const audio = new Audio(`/api/tts?text=${encodeURIComponent(text)}`);
     audioRef.current = audio;
-    audio.onplay = () => options?.onStart?.();
+    audio.onplay = () =>
+      options?.onStart?.(Number.isFinite(audio.duration) ? audio.duration * 1000 : undefined);
     audio.onended = () => options?.onEnd?.();
     audio.onerror = () => speakWithBrowser(text, options);
     audio.play().catch(() => speakWithBrowser(text, options));
