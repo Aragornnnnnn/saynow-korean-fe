@@ -115,6 +115,7 @@ export default function OnboardingPage() {
   const playQuestionRef = useRef<(isRepeat?: boolean) => void>(() => {});
 
   const playQuestion = useCallback((isRepeat = false) => {
+    if (!soundStepActiveRef.current) return; // 사운드 스텝을 벗어났으면 재생하지 않음
     const nextQuestion = (() => {
       if (!isRepeat) return FALLBACK_QUESTION;
       let idx = lastQuestionIndexRef.current;
@@ -127,6 +128,7 @@ export default function OnboardingPage() {
     if (isRepeat) {
       setSoundBubbleVisible(false);
       setTimeout(() => {
+        if (!soundStepActiveRef.current) return; // 300ms 대기 중 스텝을 벗어났으면 새 음성 시작 안 함
         setSoundQuestion(nextQuestion);
         setSoundBubbleVisible(true);
         playDing();
